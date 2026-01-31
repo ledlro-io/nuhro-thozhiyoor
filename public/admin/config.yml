@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: ledlro-io/nuhro-thozhiyoor
+  repo: ledlro/nuhro-thozhiyoor
   branch: main  # or master, whichever your default branch is
 
 media_folder: "public/uploads"
