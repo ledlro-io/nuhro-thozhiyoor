@@ -1,1 +1,23 @@
 
+
+backend:
+  name: github
+  repo: ledlro-io/nuhro-thozhiyoor
+  branch: main  # or master, whichever your default branch is
+  app_id: $Ov23ligVTkbJekPXvgVr
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "posts"
+    label: "Posts"
+    folder: "posts"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Body", name: "body", widget: "markdown" }
