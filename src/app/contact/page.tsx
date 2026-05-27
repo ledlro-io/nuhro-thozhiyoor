@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Send, HelpCircle, CheckCircle, MessageSquare } from "lucide-react";
+import { Mail, Phone, Send, HelpCircle, CheckCircle, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
 import Separator from "@/components/Separator";
 
@@ -56,21 +56,6 @@ export default function ContactPage() {
             </p>
 
             <div className="flex flex-col gap-5 mt-3 select-none">
-              <div className="flex gap-4 items-start">
-                <div className="w-9 h-9 rounded bg-gold-primary/5 border border-gold-primary/20 flex items-center justify-center text-gold-primary flex-shrink-0">
-                  <MapPin size={16} />
-                </div>
-                <div>
-                  <h4 className="text-[10px] uppercase font-bold text-gold-primary tracking-wider">
-                    {t("Archive Enclave", "ആർക്കൈവ് വിലാസം")}
-                  </h4>
-                  <p className="text-mutedText text-xs md:text-sm mt-0.5">
-                     Kunnamkulam<br />
-                    Thrissur District, Kerala - 680520, India
-                  </p>
-                </div>
-              </div>
-
               <div className="flex gap-4 items-start">
                 <div className="w-9 h-9 rounded bg-gold-primary/5 border border-gold-primary/20 flex items-center justify-center text-gold-primary flex-shrink-0">
                   <Mail size={16} />
