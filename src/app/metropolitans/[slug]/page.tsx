@@ -11,7 +11,7 @@ async function getMetropolitan(slug: string) {
     return await prisma.metropolitan.findUnique({
       where: { slug },
     });
-  } catch {
+  } catch (error) {
     return null;
   }
 }
@@ -21,108 +21,69 @@ export default async function MetropolitanDetailsPage({
 }: {
   params: { slug: string };
 }) {
-  const lang = cookies().get("lang")?.value || "en";
+  const cookieStore = cookies();
+  const lang = cookieStore.get("lang")?.value || "en";
   const isMl = lang === "ml";
 
-  const metro = await getMetropolitan(params.slug);
-  if (!metro) notFound();
+  const metropolitan = await getMetropolitan(params.slug);
 
-  const bio = isMl ? metro.biographyMalayalam : metro.biography;
+  if (!metropolitan) {
+    notFound();
+  }
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-[#e8dcc7] font-serif">
+    <div className="max-w-4xl mx-auto px-4 md:px-8 text-parchment font-jakarta">
+      {/* Back link */}
+      <Link
+        href="/metropolitans"
+        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-primary hover:text-gold-light mb-8 transition-colors"
+      >
+        <ArrowLeft size={14} /> {isMl ? "തിരികെ പോവുക" : "Back to Metropolitans"}
+      </Link>
 
-      {/* Container */}
-      <div className="max-w-3xl mx-auto px-6 md:px-10 py-12">
-
-        {/* Back */}
-        <Link
-          href="/metropolitans"
-          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#c8a96a] hover:text-[#e6c98f] mb-10 transition"
-        >
-          <ArrowLeft size={14} />
-          {isMl ? "തിരികെ പോവുക" : "Back"}
-        </Link>
-
-        {/* HEADER */}
-        <header className="border-b border-[#c8a96a]/20 pb-8 mb-10">
-
-          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[#c8a96a]">
-            <Shield size={12} />
-            {isMl ? metro.titleMalayalam : metro.title}
+      <article className="flex flex-col gap-8">
+        {/* Banner metadata */}
+        <div className="flex flex-col gap-4 border-b border-gold-primary/10 pb-8">
+          <div className="flex flex-wrap items-center gap-4 text-gold-primary text-[10px] font-bold uppercase tracking-wider">
+            <span className="flex items-center gap-1">
+              <Shield size={13} /> {isMl ? metropolitan.titleMalayalam : metropolitan.title}
+            </span>
+            <span className="text-mutedText">&bull;</span>
+            <span className="flex items-center gap-1">
+              <Calendar size={13} /> {isMl ? "ഭരണകാലം" : "Reign"}: {metropolitan.reignStart} – {metropolitan.reignEnd}
+            </span>
           </div>
 
-          <h1 className="mt-4 text-4xl md:text-5xl leading-tight font-serif text-[#f3e7d3]">
-            {isMl ? metro.nameMalayalam : metro.name}
+          <h1 className="font-cinzel text-3xl sm:text-5xl font-bold text-gold-primary leading-tight mt-1">
+            {isMl ? metropolitan.nameMalayalam : metropolitan.name}
           </h1>
 
-          <div className="mt-4 flex items-center gap-2 text-xs text-[#b8a98b]">
-            <Calendar size={12} />
-            {metro.reignStart} – {metro.reignEnd}
-          </div>
-
-          <p className="mt-5 text-[#cfc2ab] leading-relaxed text-sm md:text-base border-l border-[#c8a96a]/30 pl-4">
-            {isMl ? metro.bioSummaryMalayalam : metro.bioSummary}
+          <p className="text-mutedText italic text-xs md:text-sm border-l-2 border-gold-primary/30 pl-4 mt-2">
+            {isMl ? metropolitan.bioSummaryMalayalam : metropolitan.bioSummary}
           </p>
-        </header>
+        </div>
 
-        {/* IMAGE */}
-        {metro.imageUrl && (
-          <div className="mb-12 overflow-hidden border border-[#c8a96a]/15">
+        {/* Profile Image Option */}
+        {metropolitan.imageUrl && (
+          <div className="relative w-full max-h-[360px] overflow-hidden rounded-xl border border-gold-primary/10 bg-background shadow-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={metro.imageUrl}
-              alt={metro.name}
-              className="w-full max-h-[420px] object-cover opacity-90"
+              src={metropolitan.imageUrl}
+              alt={isMl ? metropolitan.nameMalayalam : metropolitan.name}
+              className="w-full h-full object-cover opacity-70"
+              style={{ maxHeight: "360px" }}
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
           </div>
         )}
 
-        {/* BIO */}
-        <article className="leading-9 text-[#d6c7ad] text-[16px] md:text-[17px]">
-
-          <ReactMarkdown
-            components={{
-              p: ({ children }) => (
-                <p className="mb-6 leading-9 text-justify">
-                  {children}
-                </p>
-              ),
-
-              strong: ({ children }) => (
-                <strong className="text-[#e6c98f] font-normal tracking-wide">
-                  {children}
-                </strong>
-              ),
-
-              h1: ({ children }) => (
-                <h1 className="mt-10 mb-4 text-xl tracking-widest uppercase text-[#e6c98f]">
-                  {children}
-                </h1>
-              ),
-
-              h2: ({ children }) => (
-                <h2 className="mt-8 mb-3 text-lg text-[#e6c98f] tracking-wide">
-                  {children}
-                </h2>
-              ),
-
-              ul: ({ children }) => (
-                <ul className="list-disc pl-6 mb-6 space-y-2 text-[#d6c7ad]">
-                  {children}
-                </ul>
-              ),
-
-              li: ({ children }) => (
-                <li className="leading-8">{children}</li>
-              ),
-            }}
-          >
-            {bio}
+        {/* Biography Content (Rendered with dropcaps for classic look) */}
+        <div className="manuscript-body prose prose-invert max-w-none leading-relaxed mt-4">
+          <ReactMarkdown>
+            {isMl ? metropolitan.biographyMalayalam : metropolitan.biography}
           </ReactMarkdown>
-
-        </article>
-      </div>
+        </div>
+      </article>
     </div>
   );
 }
