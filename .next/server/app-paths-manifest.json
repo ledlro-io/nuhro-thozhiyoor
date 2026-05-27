@@ -1,0 +1,9 @@
+{
+  "/page": "app/page.js",
+  "/gallery/page": "app/gallery/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/feedback/page": "app/feedback/page.js",
+  "/archive/page": "app/archive/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/api/posts/route": "app/api/posts/route.js"
+}

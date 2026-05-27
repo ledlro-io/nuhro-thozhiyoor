@@ -1,0 +1,101 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String   // Hashed bcrypt password
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id               String    @id @default(uuid())
+  title            String
+  titleMalayalam   String
+  slug             String    @unique
+  summary          String
+  summaryMalayalam String
+  content          String    // English Markdown text
+  contentMalayalam String    // Malayalam Markdown text
+  imageUrl         String?   // Banner image URL
+  category         String    // e.g. "History", "Manuscripts", "Theology"
+  tags             String    // Comma-separated list
+  published        Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  publishedAt      DateTime?
+}
+
+model Metropolitan {
+  id                    String   @id @default(uuid())
+  name                  String   // e.g. "Abraham Mar Koorilose I"
+  nameMalayalam         String   // e.g. "അബ്രഹാം മാർ കൂറിലോസ് I"
+  slug                  String   @unique // URL friendly slug
+  title                 String   // e.g. "Founder & First Metropolitan of Thozhiyoor"
+  titleMalayalam        String   // e.g. "സ്ഥാപകനും തൊഴിയൂരിന്റെ ഒന്നാമത് മെത്രാപ്പോലീത്തയും"
+  reignStart            String   // e.g. "1772"
+  reignEnd              String   // e.g. "1802"
+  bioSummary            String   // English short summary
+  bioSummaryMalayalam   String   // Malayalam short summary
+  biography             String   // English Markdown text
+  biographyMalayalam    String   // Malayalam Markdown text
+  imageUrl              String?  // Image url for display
+  order                 Int      // Chronological order, e.g. 1, 2, 3...
+  remembranceMonth      Int?     // 1-12
+  remembranceDay        Int?     // 1-31
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model GalleryImage {
+  id                   String   @id @default(uuid())
+  title                String
+  titleMalayalam       String
+  description          String
+  descriptionMalayalam String
+  imageUrl             String
+  category             String   // e.g. "Manuscripts", "Cathedrals", "Historical Portraits"
+  createdAt            DateTime @default(now())
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  rating    Int      // 1-5 stars
+  createdAt DateTime @default(now())
+}
+
+model Parish {
+  id                String   @id @default(uuid())
+  name              String
+  nameMalayalam     String
+  established       String   // e.g. "1789"
+  vicar             String
+  vicarMalayalam    String
+  contact           String
+  address           String
+  addressMalayalam  String
+  latitude          Float?
+  longitude         Float?
+  mapsUrl           String?  // Google Maps directions/embed URL
+  history           String   // English Markdown history
+  historyMalayalam  String   // Malayalam Markdown history
+  imageUrl          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model HomepageSetting {
+  id    String @id
+  value String // JSON string storing configurable hero or landing sections
+}
