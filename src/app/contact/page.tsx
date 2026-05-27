@@ -65,7 +65,7 @@ export default function ContactPage() {
                     {t("Archive Enclave", "ആർക്കൈവ് വിലാസം")}
                   </h4>
                   <p className="text-mutedText text-xs md:text-sm mt-0.5">
-                    Thozhiyur P.O., Kunnamkulam<br />
+                     Kunnamkulam<br />
                     Thrissur District, Kerala - 680520, India
                   </p>
                 </div>
@@ -80,7 +80,7 @@ export default function ContactPage() {
                     {t("Electronic Inquiries", "ഇമെയിൽ വിലാസം")}
                   </h4>
                   <p className="text-mutedText text-xs md:text-sm mt-0.5 hover:text-gold-light transition-colors">
-                    <a href="mailto:info@nuhrothozhiyoor.org">info@nuhrothozhiyoor.org</a>
+                    <a href="mailto:nuhrothozhiyoor@gmail.com">nuhrothozhiyoor@gmail.com</a>
                   </p>
                 </div>
               </div>
@@ -94,7 +94,7 @@ export default function ContactPage() {
                     {t("Telephony", "ഫോൺ")}
                   </h4>
                   <p className="text-mutedText text-xs md:text-sm mt-0.5">
-                    +91 4885 222 201 <span className="text-[10px] text-mutedText/50 italic">({t("Parish Office", "ഇടവക ഓഫീസ്")})</span>
+                    +91 ------------- <span className="text-[10px] text-mutedText/50 italic">({t("Admin", "----")})</span>
                   </p>
                 </div>
               </div>
