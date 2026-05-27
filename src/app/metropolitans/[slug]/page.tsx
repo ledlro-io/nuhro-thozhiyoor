@@ -24,123 +24,105 @@ export default async function MetropolitanDetailsPage({
   const lang = cookies().get("lang")?.value || "en";
   const isMl = lang === "ml";
 
-  const metropolitan = await getMetropolitan(params.slug);
-  if (!metropolitan) notFound();
+  const metro = await getMetropolitan(params.slug);
+  if (!metro) notFound();
 
-  const bio = isMl
-    ? metropolitan.biographyMalayalam
-    : metropolitan.biography;
+  const bio = isMl ? metro.biographyMalayalam : metro.biography;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-10 text-parchment font-jakarta">
+    <div className="min-h-screen bg-[#0b0b0b] text-[#e8dcc7] font-serif">
 
-      {/* Back Navigation */}
-      <Link
-        href="/metropolitans"
-        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-primary hover:text-gold-light transition mb-10"
-      >
-        <ArrowLeft size={14} />
-        {isMl ? "തിരികെ പോവുക" : "Back"}
-      </Link>
+      {/* Container */}
+      <div className="max-w-3xl mx-auto px-6 md:px-10 py-12">
 
-      {/* HEADER CARD */}
-      <header className="border-b border-gold-primary/10 pb-8 mb-10">
+        {/* Back */}
+        <Link
+          href="/metropolitans"
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#c8a96a] hover:text-[#e6c98f] mb-10 transition"
+        >
+          <ArrowLeft size={14} />
+          {isMl ? "തിരികെ പോവുക" : "Back"}
+        </Link>
 
-        <div className="flex flex-wrap items-center gap-4 text-[10px] uppercase tracking-widest text-gold-primary font-bold">
+        {/* HEADER */}
+        <header className="border-b border-[#c8a96a]/20 pb-8 mb-10">
 
-          <span className="flex items-center gap-1">
+          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[#c8a96a]">
             <Shield size={12} />
-            {isMl ? metropolitan.titleMalayalam : metropolitan.title}
-          </span>
+            {isMl ? metro.titleMalayalam : metro.title}
+          </div>
 
-          <span className="text-mutedText">•</span>
+          <h1 className="mt-4 text-4xl md:text-5xl leading-tight font-serif text-[#f3e7d3]">
+            {isMl ? metro.nameMalayalam : metro.name}
+          </h1>
 
-          <span className="flex items-center gap-1">
+          <div className="mt-4 flex items-center gap-2 text-xs text-[#b8a98b]">
             <Calendar size={12} />
-            {metropolitan.reignStart} – {metropolitan.reignEnd}
-          </span>
+            {metro.reignStart} – {metro.reignEnd}
+          </div>
 
-        </div>
+          <p className="mt-5 text-[#cfc2ab] leading-relaxed text-sm md:text-base border-l border-[#c8a96a]/30 pl-4">
+            {isMl ? metro.bioSummaryMalayalam : metro.bioSummary}
+          </p>
+        </header>
 
-        <h1 className="font-cinzel text-4xl md:text-6xl font-bold text-gold-primary mt-4 leading-tight">
-          {isMl ? metropolitan.nameMalayalam : metropolitan.name}
-        </h1>
+        {/* IMAGE */}
+        {metro.imageUrl && (
+          <div className="mb-12 overflow-hidden border border-[#c8a96a]/15">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={metro.imageUrl}
+              alt={metro.name}
+              className="w-full max-h-[420px] object-cover opacity-90"
+            />
+          </div>
+        )}
 
-        <p className="mt-4 text-mutedText italic border-l-2 border-gold-primary/30 pl-4 text-sm md:text-base leading-relaxed max-w-3xl">
-          {isMl
-            ? metropolitan.bioSummaryMalayalam
-            : metropolitan.bioSummary}
-        </p>
-      </header>
+        {/* BIO */}
+        <article className="leading-9 text-[#d6c7ad] text-[16px] md:text-[17px]">
 
-      {/* IMAGE */}
-      {metropolitan.imageUrl && (
-        <div className="mb-12 rounded-xl overflow-hidden border border-gold-primary/10 bg-black/20">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={metropolitan.imageUrl}
-            alt={metropolitan.name}
-            className="w-full max-h-[420px] object-cover opacity-85"
-          />
-        </div>
-      )}
-
-      {/* BIOGRAPHY (ADVANCED TYPOGRAPHY SYSTEM) */}
-      <article className="max-w-3xl mx-auto text-mutedText/90 text-[16px] md:text-[17px] leading-9 tracking-normal">
-
-        <ReactMarkdown
-          components={{
-            p: ({ children, node }: any) => {
-              const isFirst = node?.position?.start?.line === 1;
-
-              return (
-                <p
-                  className={[
-                    "mb-7 text-justify leading-9",
-                    "first:mt-0",
-                    isFirst
-                      ? "text-[17px] md:text-[18px]"
-                      : ""
-                  ].join(" ")}
-                >
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => (
+                <p className="mb-6 leading-9 text-justify">
                   {children}
                 </p>
-              );
-            },
+              ),
 
-            strong: ({ children }) => (
-              <strong className="text-gold-primary font-semibold">
-                {children}
-              </strong>
-            ),
+              strong: ({ children }) => (
+                <strong className="text-[#e6c98f] font-normal tracking-wide">
+                  {children}
+                </strong>
+              ),
 
-            h1: ({ children }) => (
-              <h1 className="text-2xl font-cinzel text-gold-primary mt-10 mb-4">
-                {children}
-              </h1>
-            ),
+              h1: ({ children }) => (
+                <h1 className="mt-10 mb-4 text-xl tracking-widest uppercase text-[#e6c98f]">
+                  {children}
+                </h1>
+              ),
 
-            h2: ({ children }) => (
-              <h2 className="text-xl font-cinzel text-gold-primary mt-8 mb-3">
-                {children}
-              </h2>
-            ),
+              h2: ({ children }) => (
+                <h2 className="mt-8 mb-3 text-lg text-[#e6c98f] tracking-wide">
+                  {children}
+                </h2>
+              ),
 
-            ul: ({ children }) => (
-              <ul className="list-disc pl-6 space-y-2 mb-6">
-                {children}
-              </ul>
-            ),
+              ul: ({ children }) => (
+                <ul className="list-disc pl-6 mb-6 space-y-2 text-[#d6c7ad]">
+                  {children}
+                </ul>
+              ),
 
-            li: ({ children }) => (
-              <li className="leading-8">{children}</li>
-            ),
-          }}
-        >
-          {bio}
-        </ReactMarkdown>
+              li: ({ children }) => (
+                <li className="leading-8">{children}</li>
+              ),
+            }}
+          >
+            {bio}
+          </ReactMarkdown>
 
-      </article>
+        </article>
+      </div>
     </div>
   );
 }
