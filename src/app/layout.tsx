@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DynamicParticles from "@/components/DynamicParticles";
 import { LanguageProvider } from "@/components/LanguageContext";
+import { Analytics } from "@vercel/analytics/next";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -57,6 +58,7 @@ export default function RootLayout({
           {/* Footer */}
           <Footer />
         </LanguageProvider>
+       <Analytics />
       </body>
     </html>
   );
