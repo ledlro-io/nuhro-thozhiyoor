@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding bilingual Nuhro Thozhiyoor database...");
+  console.log("Seeding Nuhro Thozhiyoor database...");
 
   // 1. Seed Admin User
   const existingAdmin = await prisma.user.findUnique({
@@ -60,7 +60,7 @@ There, in **1789**, he set up the headquarters of the church. This humble villag
 
 അന്നത്തെ മലങ്കര മെത്രാനിൽ നിന്നും കൊച്ചി രാജാവിൽ നിന്നും കടുത്ത എതിർപ്പുകൾ നേരിട്ടതിനെത്തുടർന്ന് അബ്രഹാം മാർ കൂറിലോസ് ബ്രിട്ടീഷ് ഭരണത്തിൻ കീഴിലുള്ള സ്വതന്ത്ര പ്രദേശമായ **തൊഴിയൂരിലേക്ക്** പിൻവാങ്ങി. 
 
-അവിടെ **1789**-ൽ അദ്ദേഹം സഭയുടെ ആസ്ഥാനം സ്ഥാപിച്ചു. ഈ കൊച്ചു ഗ്രാമം സ്വതന്ത്ര ആരാധനാ പാരമ്പര്യങ്ങളുടെ സങ്കേതമായി മാറി.`,
+ there, in **1789**-ൽ അദ്ദേഹം സഭയുടെ ആസ്ഥാനം സ്ഥാപിച്ചു. ഈ കൊച്ചു ഗ്രാമം സ്വതന്ത്ര ആരാധനാ പാരമ്പര്യങ്ങളുടെ സങ്കേതമായി മാറി.`,
     },
     {
       title: "Nuhro in Syriac Theology",
@@ -87,7 +87,7 @@ The West Syriac liturgy is saturated with light imagery. During the *Holy Qurban
 > "Blessed is the King who has decorated the sanctuary with His light." - St. Ephrem the Syrian`,
       contentMalayalam: `### നൂഹ്റോ എന്ന സങ്കൽപം
 
-സുറിയാനി ദൈവശാസ്ത്ര പാരമ്പര്യത്തിൽ, വെളിച്ചം എന്ന് അർത്ഥം വരുന്ന **നൂഹ്റോ (ܢܘܗܪܐ)** എന്നത് കേവലം ഭൗതിക പ്രതിഭാസമല്ല, മറിച്ച് ദൈവീക വെളിപാടിന്റെ പ്രതിരൂപമാണ്.
+സുറിയാനി ദൈവശാസ്ത്ര പാരമ്പര്യത്തിൽ, വെളിച്ചം എന്ന് അർത്ഥം വരുന്ന **നൂഹ്റോ (ܢܘܗരാ)** എന്നത് കേവലം ഭൗതിക പ്രതിഭാസമല്ല, മറിച്ച് ദൈവീക വെളിപാടിന്റെ പ്രതിരൂപമാണ്.
 
 ### ആരാധനാക്രമത്തിലെ പ്രയോഗങ്ങൾ
 
@@ -107,9 +107,9 @@ The West Syriac liturgy is saturated with light imagery. During the *Holy Qurban
   }
   console.log("Seeded posts.");
 
-  // 3. Seed Metropolitans (Configured Abraham Mar Koorilose I as today May 26 for instant testing)
+  // 3. Seed Metropolitans
   const today = new Date();
-  const currentMonth = today.getMonth() + 1; // getMonth is 0-indexed
+  const currentMonth = today.getMonth() + 1;
   const currentDate = today.getDate();
 
   const metropolitans = [
@@ -123,10 +123,17 @@ The West Syriac liturgy is saturated with light imagery. During the *Holy Qurban
       reignEnd: "1802",
       bioSummary: "The founding father of the See of Thozhiyoor, who established the church as an independent diocese in 1789.",
       bioSummaryMalayalam: "തൊഴിയൂർ ഭദ്രാസനം സ്ഥാപിക്കുകയും 1789-ൽ സഭയെ സ്വതന്ത്ര പദവിയിലേക്ക് നയിക്കുകയും ചെയ്ത സ്ഥാപക പിതാവ്.",
-      imageUrl: "https://images.unsplash.com/photo-1461360370896-922624d12aa1?q=80&w=600&auto=format&fit=crop",
+      imageUrl: "/logo.jpg",
+      coverImageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
       order: 1,
-      remembranceMonth: currentMonth, // Seeded dynamic today for testing remembrance banner
+      isSuffragan: false,
+      remembranceMonth: currentMonth,
       remembranceDay: currentDate,
+      dob: "1742",
+      dod: "1802",
+      consecration: "1772",
+      predecessor: "Founder",
+      successor: "Geevarghese Mar Koorilose II",
       biography: `### Early Life and Consecration
 
 **Kattumangattu Abraham Mar Koorilose** was born into the famous Kattumangattu family in Kunnamkulam. 
@@ -157,15 +164,86 @@ Forced to flee opposition, he found refuge in **Thozhiyoor**. In **1789**, he bu
       bioSummary: "Brother of the founder, known as the 'Younger Bava', who stabilized the fledgling independent diocese.",
       bioSummaryMalayalam: "സ്ഥാപകന്റെ സഹോദരനും സഭയുടെ ആസ്തികൾ സ്ഥിരപ്പെടുത്താൻ സഹായിച്ച രണ്ടാമത് മെത്രാപ്പോലീത്ത.",
       imageUrl: "https://images.unsplash.com/photo-1543165365-07246c723555?q=80&w=600&auto=format&fit=crop",
+      coverImageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
       order: 2,
+      isSuffragan: false,
       remembranceMonth: 3,
       remembranceDay: 22,
+      dob: "1749",
+      dod: "1808",
+      consecration: "1794",
+      predecessor: "Abraham Mar Koorilose I",
+      successor: "Skaria Mar Philexenos I",
       biography: `### Consecration and Reign
 
 **Geevarghese Mar Koorilose** was consecrated in **1794** by his brother to guarantee the succession. He took charge in **1802** and is referred to as the **Younger Bava** (*Eliya Bava*). He passed away in **1808**.`,
       biographyMalayalam: `### സ്ഥാനാഭിഷേകവും ഭരണവും
 
 തൊഴിയൂർ സഭയുടെ പിന്തുടർച്ച ഉറപ്പാക്കാൻ **1794**-ൽ സഹോദരൻ അബ്രഹാം മാർ കൂറിലോസിൽ നിന്ന് അദ്ദേഹം മെത്രാൻ സ്ഥാനം സ്വീകരിച്ചു. **1802**-ൽ സഭാ ഭരണം ഏറ്റെടുത്ത അദ്ദേഹം **ഇളയ ബാവ** എന്നറിയപ്പെടുന്നു.`,
+    },
+    {
+      name: "Cyril Mar Baselios I",
+      nameMalayalam: "സിറിൽ മാർ ബസേലിയോസ് ഒന്നാമൻ",
+      slug: "cyril-mar-baselios-i",
+      title: "Reigning Metropolitan of Thozhiyoor",
+      titleMalayalam: "തൊഴിയൂർ സഭയുടെ ഇപ്പോഴത്തെ മെത്രാപ്പോലീത്ത",
+      reignStart: "2001",
+      reignEnd: "Present",
+      bioSummary: "The 14th reigning Metropolitan of the Malabar Independent Syrian Church, consecrated in March 2001.",
+      bioSummaryMalayalam: "2001 മാർച്ചിൽ സ്ഥാനാരോഹണം ചെയ്ത മലബാർ സ്വതന്ത്ര സുറിയാനി സഭയുടെ 14-ാമത് മെത്രാപ്പോലീത്ത.",
+      imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop",
+      coverImageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+      order: 14,
+      isSuffragan: false,
+      remembranceMonth: null,
+      remembranceDay: null,
+      dob: "30 July 1956",
+      dod: null,
+      consecration: "10 March 2001",
+      predecessor: "Joseph Mar Koorilose",
+      successor: "Active / Reigning",
+      biography: `### Early Life & Education
+
+**Cyril Mar Baselios I** was born on **30 July 1956**. He pursued his theological education and dedicated his life to the service of the Church.
+
+### Metropolitan Elevation
+
+In **2001**, he was consecrated as the **14th Metropolitan** of the See of Thozhiyoor, succeeding the beloved **Joseph Mar Koorilose**. Under his reign, the Church has advanced in digital archival preservation and community welfare.`,
+      biographyMalayalam: `### ആദ്യകാല ജീവിതം
+
+**സിറിൽ മാർ ബസേലിയോസ് ഒന്നാമൻ** **1956 ജൂലൈ 30**-നാണ് ജനിച്ചത്. അദ്ദേഹം തന്റെ വൈദിക പഠനങ്ങൾക്ക് ശേഷം സഭയുടെ വിവിധ ശുശ്രൂഷകളിൽ വ്യാപൃതനായി.
+
+### മെത്രാപ്പോലീത്ത പദവി
+
+**2001** മാർച്ചിൽ അദ്ദേഹം തൊഴിയൂർ സിംഹാസനത്തിന്റെ **14-ാമത് മെത്രാപ്പോലീത്തയായി** അഭിഷിക്തനായി. മുൻഗാമി ജോസഫ് മാർ കൂറിലോസ് കാലം ചെയ്തതിനെത്തുടർന്നാണ് അദ്ദേഹം സാരഥ്യം ഏറ്റെടുത്തത്.`,
+    },
+    {
+      name: "Geevarghese Mar Coorilos",
+      nameMalayalam: "ഗീവർഗീസ് മാർ കൂറിലോസ്",
+      slug: "geevarghese-mar-coorilos",
+      title: "Metropolitan Emeritus",
+      titleMalayalam: "സഫ്രഗൻ മെത്രാപ്പോലീത്ത",
+      reignStart: "1997",
+      reignEnd: "2023",
+      bioSummary: "A prominent Suffragan Metropolitan of the Thozhiyoor See, widely known for his theological writings and ecumenical contributions.",
+      bioSummaryMalayalam: "തൊഴിയൂർ സഭയിലെ പ്രമുഖനായ സഫ്രഗൻ മെത്രാപ്പോലീത്ത, അദ്ദേഹത്തിന്റെ ദൈവശാസ്ത്ര ലേഖനങ്ങളിലൂടെയും എക്യുമെനിക്കൽ സംഭാവനകളിലൂടെയും പ്രശസ്തനാണ്.",
+      imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop",
+      coverImageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+      order: 15,
+      isSuffragan: true,
+      remembranceMonth: null,
+      remembranceDay: null,
+      dob: "14 November 1965",
+      dod: null,
+      consecration: "27 August 1997",
+      predecessor: "Joseph Mar Koorilose",
+      successor: "Retired",
+      biography: `### Ministry & Contribution
+
+Geevarghese Mar Coorilos has served the diocese in various capacities, especially engaging in social development and public representation of the independent episcopal tradition.`,
+      biographyMalayalam: `### സേവനങ്ങളും സംഭാവനകളും
+
+സാമൂഹിക വികസനത്തിലും സ്വതന്ത്ര സഭാ പാരമ്പര്യങ്ങളുടെ പൊതു പ്രാതിനിധ്യത്തിലും അദ്ദേഹം സഭയെ വളരെക്കാലം നയിച്ചു.`,
     },
   ];
 

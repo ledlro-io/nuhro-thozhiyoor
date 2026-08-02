@@ -18,26 +18,52 @@ export async function GET(req: Request) {
       const session = getSessionUser(req);
       if (!session) {
         where.published = true;
+      } else if (session.role === "author") {
+        // Authors can only see published posts OR drafts that they created
+        where.OR = [
+          { published: true },
+          { authorId: session.userId }
+        ];
+        if (category && category !== "All") {
+          where.category = category;
+        }
       }
     }
 
-    if (category && category !== "All") {
+    if (category && category !== "All" && !where.OR) {
       where.category = category;
     }
 
     if (search) {
-      where.OR = [
-        { title: { contains: search } },
-        { titleMalayalam: { contains: search } },
-        { summary: { contains: search } },
-        { summaryMalayalam: { contains: search } },
-        { content: { contains: search } },
-        { contentMalayalam: { contains: search } },
-      ];
+      const searchFilter = {
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { titleMalayalam: { contains: search, mode: "insensitive" } },
+          { summary: { contains: search, mode: "insensitive" } },
+          { summaryMalayalam: { contains: search, mode: "insensitive" } },
+          { content: { contains: search, mode: "insensitive" } },
+          { contentMalayalam: { contains: search, mode: "insensitive" } },
+        ]
+      };
+
+      if (where.OR) {
+        // If there's an OR query for drafts, merge search logic with AND
+        where.AND = [searchFilter];
+      } else {
+        where.OR = searchFilter.OR;
+      }
     }
 
     const posts = await prisma.post.findMany({
       where,
+      include: {
+        author: {
+          select: {
+            name: true,
+            username: true,
+          }
+        }
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -52,7 +78,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const session = getSessionUser(req);
-    if (!session || session.role !== "admin") {
+    if (!session || (session.role !== "admin" && session.role !== "author")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -83,6 +109,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "An article with this URL slug already exists" }, { status: 400 });
     }
 
+    // Authors can ONLY save drafts (verified by admin)
+    const isAuthor = session.role === "author";
+    const publishVal = isAuthor ? false : published;
+
     const post = await prisma.post.create({
       data: {
         title,
@@ -95,8 +125,9 @@ export async function POST(req: Request) {
         imageUrl: imageUrl || null,
         category,
         tags: tags || "",
-        published,
-        publishedAt: published ? new Date() : null,
+        published: publishVal,
+        publishedAt: publishVal ? new Date() : null,
+        authorId: session.userId,
       },
     });
 

@@ -19,6 +19,7 @@ interface Post {
   imageUrl?: string;
   published: boolean;
   createdAt: string;
+  authorId?: string;
 }
 
 interface Metropolitan {
@@ -38,6 +39,13 @@ interface Metropolitan {
   order: number;
   remembranceMonth?: number;
   remembranceDay?: number;
+  dob?: string;
+  dod?: string;
+  consecration?: string;
+  predecessor?: string;
+  successor?: string;
+  coverImageUrl?: string;
+  isSuffragan?: boolean;
 }
 
 interface GalleryImage {
@@ -77,8 +85,26 @@ interface Feedback {
   createdAt: string;
 }
 
+interface UserAccount {
+  id: string;
+  username: string;
+  name: string;
+  role: string;
+  createdAt: string;
+}
+
+interface NewsItem {
+  id: string;
+  title: string;
+  titleMalayalam: string;
+  content: string;
+  contentMalayalam: string;
+  imageUrl?: string;
+  date: string;
+}
+
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"posts" | "metropolitans" | "gallery" | "parishes" | "feedback">("posts");
+  const [activeTab, setActiveTab] = useState<"posts" | "metropolitans" | "gallery" | "parishes" | "feedback" | "news" | "users">("posts");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
@@ -89,9 +115,11 @@ export default function AdminDashboardPage() {
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [parishes, setParishes] = useState<Parish[]>([]);
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [usersList, setUsersList] = useState<UserAccount[]>([]);
 
   // Editor mode
-  const [editorMode, setEditorMode] = useState<"none" | "create_post" | "edit_post" | "create_metro" | "edit_metro" | "create_gallery" | "create_parish" | "edit_parish">("none");
+  const [editorMode, setEditorMode] = useState<"none" | "create_post" | "edit_post" | "create_metro" | "edit_metro" | "create_gallery" | "create_parish" | "edit_parish" | "create_news" | "edit_news">("none");
   const [currentEditId, setCurrentEditId] = useState("");
   const [currentEditSlug, setCurrentEditSlug] = useState("");
 
@@ -121,9 +149,16 @@ export default function AdminDashboardPage() {
   const [metroBiography, setMetroBiography] = useState("");
   const [metroBiographyMl, setMetroBiographyMl] = useState("");
   const [metroImageUrl, setMetroImageUrl] = useState("");
+  const [metroCoverImageUrl, setMetroCoverImageUrl] = useState("");
+  const [metroIsSuffragan, setMetroIsSuffragan] = useState(false);
   const [metroOrder, setMetroOrder] = useState(1);
   const [metroMonth, setMetroMonth] = useState("");
   const [metroDay, setMetroDay] = useState("");
+  const [metroDob, setMetroDob] = useState("");
+  const [metroDod, setMetroDod] = useState("");
+  const [metroConsecration, setMetroConsecration] = useState("");
+  const [metroPredecessor, setMetroPredecessor] = useState("");
+  const [metroSuccessor, setMetroSuccessor] = useState("");
   const [savingMetro, setSavingMetro] = useState(false);
 
   // Gallery form states
@@ -136,7 +171,7 @@ export default function AdminDashboardPage() {
   const [savingGallery, setSavingGallery] = useState(false);
 
   // Parish form states
-  const [parishName, setParishName] = useState("");
+  const [parishName, parishSetName] = useState("");
   const [parishNameMl, setParishNameMl] = useState("");
   const [parishEstablished, setParishEstablished] = useState("");
   const [parishVicar, setParishVicar] = useState("");
@@ -152,6 +187,21 @@ export default function AdminDashboardPage() {
   const [parishImageUrl, setParishImageUrl] = useState("");
   const [savingParish, setSavingParish] = useState(false);
 
+  // User form states
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newRole, setNewRole] = useState("author");
+  const [savingUser, setSavingUser] = useState(false);
+
+  // News form states
+  const [newsTitle, setNewsTitle] = useState("");
+  const [newsTitleMl, setNewsTitleMl] = useState("");
+  const [newsContent, setNewsContent] = useState("");
+  const [newsContentMl, setNewsContentMl] = useState("");
+  const [newsImageUrl, setNewsImageUrl] = useState("");
+  const [savingNews, setSavingNews] = useState(false);
+
   // Feedback notifications
   const [feedbackAlert, setFeedbackAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
@@ -164,7 +214,7 @@ export default function AdminDashboardPage() {
       } else {
         const data = await res.json();
         setUser(data.user);
-        fetchData();
+        fetchData(data.user);
       }
     } catch {
       router.push("/admin");
@@ -176,7 +226,7 @@ export default function AdminDashboardPage() {
   }, [checkAuth]);
 
   // Fetch list data
-  const fetchData = async () => {
+  const fetchData = async (currentUser?: any) => {
     try {
       setLoading(true);
       const resPosts = await fetch("/api/posts?includeDrafts=true");
@@ -193,6 +243,15 @@ export default function AdminDashboardPage() {
 
       const resFeedbacks = await fetch("/api/feedback");
       if (resFeedbacks.ok) setFeedbacks(await resFeedbacks.json());
+
+      const resNews = await fetch("/api/news");
+      if (resNews.ok) setNewsList(await resNews.json());
+
+      const activeUser = currentUser || user;
+      if (activeUser?.role === "admin") {
+        const resUsers = await fetch("/api/users");
+        if (resUsers.ok) setUsersList(await resUsers.json());
+      }
     } catch (err) {
       showFeedback("error", "Failed to sync archive databases");
     } finally {
@@ -312,9 +371,16 @@ export default function AdminDashboardPage() {
     setMetroBiography("");
     setMetroBiographyMl("");
     setMetroImageUrl("");
+    setMetroCoverImageUrl("");
+    setMetroIsSuffragan(false);
     setMetroOrder(metropolitans.length + 1);
     setMetroMonth("");
     setMetroDay("");
+    setMetroDob("");
+    setMetroDod("");
+    setMetroConsecration("");
+    setMetroPredecessor("");
+    setMetroSuccessor("");
     setEditorMode("create_metro");
   };
 
@@ -331,9 +397,16 @@ export default function AdminDashboardPage() {
     setMetroBiography(metro.biography);
     setMetroBiographyMl(metro.biographyMalayalam);
     setMetroImageUrl(metro.imageUrl || "");
+    setMetroCoverImageUrl(metro.coverImageUrl || "");
+    setMetroIsSuffragan(metro.isSuffragan || false);
     setMetroOrder(metro.order);
     setMetroMonth(metro.remembranceMonth ? String(metro.remembranceMonth) : "");
     setMetroDay(metro.remembranceDay ? String(metro.remembranceDay) : "");
+    setMetroDob(metro.dob || "");
+    setMetroDod(metro.dod || "");
+    setMetroConsecration(metro.consecration || "");
+    setMetroPredecessor(metro.predecessor || "");
+    setMetroSuccessor(metro.successor || "");
     setCurrentEditSlug(metro.slug);
     setEditorMode("edit_metro");
   };
@@ -355,9 +428,16 @@ export default function AdminDashboardPage() {
         biography: metroBiography,
         biographyMalayalam: metroBiographyMl,
         imageUrl: metroImageUrl,
+        coverImageUrl: metroCoverImageUrl || null,
+        isSuffragan: metroIsSuffragan,
         order: metroOrder,
         remembranceMonth: metroMonth ? parseInt(metroMonth) : null,
         remembranceDay: metroDay ? parseInt(metroDay) : null,
+        dob: metroDob || null,
+        dod: metroDod || null,
+        consecration: metroConsecration || null,
+        predecessor: metroPredecessor || null,
+        successor: metroSuccessor || null,
       };
 
       const url = editorMode === "create_metro" ? "/api/metropolitans" : `/api/metropolitans/${currentEditSlug}`;
@@ -399,7 +479,7 @@ export default function AdminDashboardPage() {
 
   // PARISH CRUD HANDLERS
   const startCreateParish = () => {
-    setParishName("");
+    parishSetName("");
     setParishNameMl("");
     setParishEstablished("");
     setParishVicar("");
@@ -417,7 +497,7 @@ export default function AdminDashboardPage() {
   };
 
   const startEditParish = (parish: Parish) => {
-    setParishName(parish.name);
+    parishSetName(parish.name);
     setParishNameMl(parish.nameMalayalam);
     setParishEstablished(parish.established);
     setParishVicar(parish.vicar);
@@ -533,6 +613,127 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // NEWS CRUD HANDLERS
+  const startCreateNews = () => {
+    setNewsTitle("");
+    setNewsTitleMl("");
+    setNewsContent("");
+    setNewsContentMl("");
+    setNewsImageUrl("");
+    setEditorMode("create_news");
+  };
+
+  const startEditNews = (item: NewsItem) => {
+    setNewsTitle(item.title);
+    setNewsTitleMl(item.titleMalayalam);
+    setNewsContent(item.content);
+    setNewsContentMl(item.contentMalayalam);
+    setNewsImageUrl(item.imageUrl || "");
+    setCurrentEditId(item.id);
+    setEditorMode("edit_news");
+  };
+
+  const saveNews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingNews(true);
+    try {
+      const payload = {
+        title: newsTitle,
+        titleMalayalam: newsTitleMl,
+        content: newsContent,
+        contentMalayalam: newsContentMl,
+        imageUrl: newsImageUrl,
+      };
+
+      const url = editorMode === "create_news" ? "/api/news" : `/api/news/${currentEditId}`;
+      const method = editorMode === "create_news" ? "POST" : "PUT";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showFeedback("success", "News announcement saved successfully");
+        setEditorMode("none");
+        fetchData();
+      } else {
+        showFeedback("error", data.error || "Failed to save news announcement");
+      }
+    } catch {
+      showFeedback("error", "Error saving news announcement");
+    } finally {
+      setSavingNews(false);
+    }
+  };
+
+  const deleteNews = async (id: string) => {
+    if (!confirm("Delete this news announcement?")) return;
+    try {
+      const res = await fetch(`/api/news/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        showFeedback("success", "News announcement deleted successfully");
+        fetchData();
+      }
+    } catch {
+      showFeedback("error", "Failed to delete news");
+    }
+  };
+
+  // USER CRUD HANDLERS
+  const saveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingUser(true);
+    try {
+      const payload = {
+        username: newUsername,
+        password: newPassword,
+        name: newName,
+        role: newRole,
+      };
+
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showFeedback("success", `User ${newUsername} created successfully`);
+        setNewUsername("");
+        setNewPassword("");
+        setNewName("");
+        setNewRole("author");
+        fetchData();
+      } else {
+        showFeedback("error", data.error || "Failed to create user account");
+      }
+    } catch {
+      showFeedback("error", "Error connecting to authentication system");
+    } finally {
+      setSavingUser(false);
+    }
+  };
+
+  const deleteUser = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this user? This will revoke their access to the CMS.")) return;
+    try {
+      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        showFeedback("success", "User account deleted successfully");
+        fetchData();
+      } else {
+        const data = await res.json();
+        showFeedback("error", data.error || "Failed to delete user account");
+      }
+    } catch {
+      showFeedback("error", "Failed to delete user account");
+    }
+  };
+
   if (loading && !user) {
     return (
       <div className="flex justify-center items-center py-40 text-gold-primary">
@@ -541,19 +742,31 @@ export default function AdminDashboardPage() {
     );
   }
 
+  // Filter posts list based on role
+  const displayedPosts = posts.filter((p) => user?.role === "admin" || p.authorId === user?.id);
+
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 text-parchment flex flex-col gap-10 font-jakarta">
       {/* Dashboard Top bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gold-primary/10 pb-6">
-        <div>
-          <span className="text-xs font-bold text-gold-primary uppercase tracking-wider">Heritage Administrative Console</span>
-          <h1 className="font-cinzel text-3xl font-bold text-gold-primary mt-1">Nuhro Thozhiyoor CMS</h1>
+        <div className="flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.jpg" alt="Logo" className="w-12 h-12 rounded-full border border-gold-primary/30 object-cover" />
+          <div>
+            <span className="text-xs font-bold text-gold-primary uppercase tracking-wider">Heritage Administrative Console</span>
+            <h1 className="font-cinzel text-3xl font-bold text-gold-primary mt-0.5">Nuhro Thozhiyoor CMS</h1>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 bg-surface p-2.5 rounded-lg border border-gold-primary/10">
           <div className="text-right">
             <p className="text-xs text-mutedText font-semibold">Active Archivist</p>
-            <p className="text-sm text-gold-light font-mono font-bold">{user?.name || "Administrator"}</p>
+            <p className="text-sm text-gold-light font-mono font-bold">
+              {user?.name || "Administrator"}{" "}
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-gold-primary/10 text-gold-primary uppercase font-extrabold tracking-wider ml-1">
+                {user?.role}
+              </span>
+            </p>
           </div>
           <button
             onClick={handleLogout}
@@ -582,7 +795,7 @@ export default function AdminDashboardPage() {
         <div className="p-8 rounded-xl bg-surface border border-gold-primary/10 shadow-2xl glass-panel relative animate-scale-up">
           <button
             onClick={() => setEditorMode("none")}
-            className="absolute top-4 right-4 text-xs font-semibold px-3 py-1.5 rounded bg-background border border-gold-primary/20 hover:bg-gold-primary/15 text-gold-primary"
+            className="absolute top-4 right-4 text-xs font-semibold px-3 py-1.5 rounded bg-background border border-gold-primary/20 hover:bg-gold-primary/15 text-gold-primary z-50"
           >
             Cancel / Close
           </button>
@@ -616,6 +829,7 @@ export default function AdminDashboardPage() {
                 setImageUrl={setPostImageUrl}
                 onSave={savePost}
                 isSaving={savingPost}
+                isAdmin={user?.role === "admin"}
               />
             </div>
           )}
@@ -753,15 +967,101 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Profile Portrait Image URL</label>
+              {/* Consecration details grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 border-t border-gold-primary/5 pt-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Date of Birth</label>
+                  <input
+                    type="text"
+                    value={metroDob}
+                    onChange={(e) => setMetroDob(e.target.value)}
+                    placeholder="e.g. 30 July 1956"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Date of Death</label>
+                  <input
+                    type="text"
+                    value={metroDod}
+                    onChange={(e) => setMetroDod(e.target.value)}
+                    placeholder="e.g. 15 March 2021 (leave blank if living)"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Consecration Date</label>
+                  <input
+                    type="text"
+                    value={metroConsecration}
+                    onChange={(e) => setMetroConsecration(e.target.value)}
+                    placeholder="e.g. 10 March 2001"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Predecessor</label>
+                  <input
+                    type="text"
+                    value={metroPredecessor}
+                    onChange={(e) => setMetroPredecessor(e.target.value)}
+                    placeholder="e.g. Joseph Mar Koorilose"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Successor</label>
+                  <input
+                    type="text"
+                    value={metroSuccessor}
+                    onChange={(e) => setMetroSuccessor(e.target.value)}
+                    placeholder="e.g. Cyril Mar Baselios I"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Profile Portrait Image URL</label>
+                  <input
+                    type="text"
+                    value={metroImageUrl}
+                    onChange={(e) => setMetroImageUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Cover Banner Image URL</label>
+                  <input
+                    type="text"
+                    value={metroCoverImageUrl}
+                    onChange={(e) => setMetroCoverImageUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 p-3 rounded bg-background/50 border border-gold-primary/10">
                 <input
-                  type="text"
-                  value={metroImageUrl}
-                  onChange={(e) => setMetroImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  type="checkbox"
+                  id="isSuffraganCheck"
+                  checked={metroIsSuffragan}
+                  onChange={(e) => setMetroIsSuffragan(e.target.checked)}
+                  className="accent-gold-primary h-4 w-4 rounded cursor-pointer"
                 />
+                <label htmlFor="isSuffraganCheck" className="text-xs text-gold-primary font-bold uppercase cursor-pointer select-none">
+                  Suffragan Metropolitan (Check if this father is a Suffragan Metropolitan)
+                </label>
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -815,7 +1115,7 @@ export default function AdminDashboardPage() {
               <button
                 type="submit"
                 disabled={savingMetro}
-                className="w-full py-3 rounded bg-gradient-to-r from-gold-primary to-gold-secondary text-background hover:brightness-110 font-bold text-xs uppercase tracking-wider"
+                className="w-full py-3 rounded bg-gradient-to-r from-gold-primary to-gold-secondary text-background hover:brightness-110 font-bold text-xs uppercase tracking-wider animate-gold-pulse"
               >
                 {savingMetro ? "Saving Biography..." : "Save Biography"}
               </button>
@@ -928,7 +1228,7 @@ export default function AdminDashboardPage() {
                     type="text"
                     required
                     value={parishName}
-                    onChange={(e) => setParishName(e.target.value)}
+                    onChange={(e) => parishSetName(e.target.value)}
                     placeholder="e.g. St. George's Cathedral, Thozhiyur"
                     className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
                   />
@@ -1100,13 +1400,91 @@ export default function AdminDashboardPage() {
               </button>
             </form>
           )}
+
+          {/* 5. NEWS EDITOR */}
+          {(editorMode === "create_news" || editorMode === "edit_news") && (
+            <form onSubmit={saveNews} className="flex flex-col gap-5 max-w-3xl mx-auto">
+              <h2 className="font-cinzel text-xl font-bold text-gold-primary border-b border-gold-primary/10 pb-3 mb-2">
+                {editorMode === "create_news" ? "Publish News Announcement" : "Edit News Announcement"}
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">News Title (English)</label>
+                  <input
+                    type="text"
+                    required
+                    value={newsTitle}
+                    onChange={(e) => setNewsTitle(e.target.value)}
+                    placeholder="e.g. Feast of Kattumangattu Bavas Commemorated"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">News Title (Malayalam)</label>
+                  <input
+                    type="text"
+                    required
+                    value={newsTitleMl}
+                    onChange={(e) => setNewsTitleMl(e.target.value)}
+                    placeholder="ഉദാ: കാട്ടുമങ്ങാട്ട് ബാവാമാരുടെ പെരുന്നാൾ"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Image URL</label>
+                <input
+                  type="text"
+                  value={newsImageUrl}
+                  onChange={(e) => setNewsImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">English Content (Markdown supported)</label>
+                <textarea
+                  required
+                  rows={6}
+                  value={newsContent}
+                  onChange={(e) => setNewsContent(e.target.value)}
+                  placeholder="Details of the announcement..."
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-relaxed font-mono"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Malayalam Content (മലയാളം ഉള്ളടക്കം)</label>
+                <textarea
+                  required
+                  rows={6}
+                  value={newsContentMl}
+                  onChange={(e) => setNewsContentMl(e.target.value)}
+                  placeholder="അറിയിപ്പിന്റെ വിശദവിവരങ്ങൾ മലയാളത്തിൽ എഴുതുക..."
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-relaxed font-mono"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingNews}
+                className="w-full py-3 rounded bg-gradient-to-r from-gold-primary to-gold-secondary text-background hover:brightness-110 font-bold text-xs uppercase tracking-wider"
+              >
+                {savingNews ? "Saving Announcement..." : "Save Announcement"}
+              </button>
+            </form>
+          )}
         </div>
       ) : (
         /* STANDARD LISTINGS VIEW */
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
           {/* Tabs Sidebar */}
-          <div className="flex flex-row lg:flex-col gap-2 border-b lg:border-b-0 lg:border-r border-gold-primary/10 pb-4 lg:pb-0 lg:pr-6 h-fit select-none">
+          <div className="flex flex-row lg:flex-col gap-2 border-b lg:border-b-0 lg:border-r border-gold-primary/10 pb-4 lg:pb-0 lg:pr-6 h-fit select-none overflow-x-auto lg:overflow-x-visible whitespace-nowrap lg:whitespace-normal">
             <button
               onClick={() => setActiveTab("posts")}
               className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
@@ -1117,46 +1495,71 @@ export default function AdminDashboardPage() {
             >
               <FileText size={16} /> Research Posts
             </button>
-            <button
-              onClick={() => setActiveTab("metropolitans")}
-              className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
-                activeTab === "metropolitans"
-                  ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
-                  : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
-              }`}
-            >
-              <Users size={16} /> Metropolitans
-            </button>
-            <button
-              onClick={() => setActiveTab("gallery")}
-              className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
-                activeTab === "gallery"
-                  ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
-                  : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
-              }`}
-            >
-              <ImageIcon size={16} /> Museum Gallery
-            </button>
-            <button
-              onClick={() => setActiveTab("parishes")}
-              className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
-                activeTab === "parishes"
-                  ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
-                  : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
-              }`}
-            >
-              <MapPin size={16} /> Manage Parishes
-            </button>
-            <button
-              onClick={() => setActiveTab("feedback")}
-              className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
-                activeTab === "feedback"
-                  ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
-                  : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
-              }`}
-            >
-              <MessageSquare size={16} /> Visitor Feedbacks
-            </button>
+
+            {user?.role === "admin" && (
+              <>
+                <button
+                  onClick={() => setActiveTab("news")}
+                  className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
+                    activeTab === "news"
+                      ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
+                      : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
+                  }`}
+                >
+                  <FileText size={16} /> News &amp; Events
+                </button>
+                <button
+                  onClick={() => setActiveTab("metropolitans")}
+                  className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
+                    activeTab === "metropolitans"
+                      ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
+                      : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
+                  }`}
+                >
+                  <Users size={16} /> Metropolitans
+                </button>
+                <button
+                  onClick={() => setActiveTab("gallery")}
+                  className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
+                    activeTab === "gallery"
+                      ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
+                      : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
+                  }`}
+                >
+                  <ImageIcon size={16} /> Museum Gallery
+                </button>
+                <button
+                  onClick={() => setActiveTab("parishes")}
+                  className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
+                    activeTab === "parishes"
+                      ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
+                      : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
+                  }`}
+                >
+                  <MapPin size={16} /> Manage Parishes
+                </button>
+                <button
+                  onClick={() => setActiveTab("feedback")}
+                  className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
+                    activeTab === "feedback"
+                      ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
+                      : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
+                  }`}
+                >
+                  <MessageSquare size={16} /> Visitor Feedbacks
+                </button>
+                <button
+                  onClick={() => setActiveTab("users")}
+                  className={`flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all w-full ${
+                    activeTab === "users"
+                      ? "bg-gold-primary/10 border border-gold-primary/30 text-gold-primary"
+                      : "hover:bg-cardElevated text-mutedText hover:text-gold-light"
+                  }`}
+                >
+                  <Users size={16} /> Manage Users
+                </button>
+              </>
+            )}
           </div>
 
           {/* List contents */}
@@ -1174,12 +1577,12 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                {posts.length > 0 ? (
+                {displayedPosts.length > 0 ? (
                   <div className="flex flex-col gap-4">
-                    {posts.map((post) => (
+                    {displayedPosts.map((post) => (
                       <div
                         key={post.id}
-                        className="p-4 rounded-lg bg-surface border border-gold-primary/5 hover:border-gold-primary/15 transition-all flex items-center justify-between gap-4"
+                        className="p-4 rounded-lg bg-surface border border-gold-primary/5 hover:border-gold-primary/15 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
                         <div className="flex flex-col gap-1">
                           <h4 className="font-cinzel text-sm font-bold text-parchment leading-snug">{post.title}</h4>
@@ -1201,19 +1604,45 @@ export default function AdminDashboardPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 self-end sm:self-auto">
+                          {!post.published && user?.role === "admin" && (
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const res = await fetch(`/api/posts/${post.slug}`, {
+                                    method: "PUT",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ ...post, published: true }),
+                                  });
+                                  if (res.ok) {
+                                    showFeedback("success", "Post verified and published!");
+                                    fetchData();
+                                  } else {
+                                    showFeedback("error", "Failed to publish post");
+                                  }
+                                } catch {
+                                  showFeedback("error", "Error publishing post");
+                                }
+                              }}
+                              className="px-2.5 py-1.5 rounded bg-green-700 hover:bg-green-600 text-white font-bold text-[9px] uppercase tracking-wider transition-colors mr-2 shadow-sm"
+                            >
+                              Verify &amp; Publish
+                            </button>
+                          )}
                           <button
                             onClick={() => startEditPost(post)}
                             className="p-2 bg-background hover:bg-cardElevated border border-gold-primary/15 hover:border-gold-primary/45 rounded text-gold-primary transition-all"
                           >
                             <Edit size={12} />
                           </button>
-                          <button
-                            onClick={() => deletePost(post.slug)}
-                            className="p-2 bg-background hover:bg-red-950/25 border border-red-500/10 hover:border-red-500/40 rounded text-red-400 transition-all"
-                          >
-                            <Trash2 size={12} />
-                          </button>
+                          {user?.role === "admin" && (
+                            <button
+                              onClick={() => deletePost(post.slug)}
+                              className="p-2 bg-background hover:bg-red-950/25 border border-red-500/10 hover:border-red-500/40 rounded text-red-400 transition-all"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -1225,7 +1654,7 @@ export default function AdminDashboardPage() {
             )}
 
             {/* 2. METROPOLITANS TAB */}
-            {activeTab === "metropolitans" && (
+            {activeTab === "metropolitans" && user?.role === "admin" && (
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between border-b border-gold-primary/5 pb-3">
                   <h3 className="font-cinzel text-base font-bold text-gold-primary">Metropolitan Biographies</h3>
@@ -1257,6 +1686,14 @@ export default function AdminDashboardPage() {
                                 <span className="text-gold-light">Feast: {metro.remembranceDay}/{metro.remembranceMonth}</span>
                               </>
                             )}
+                            {metro.isSuffragan && (
+                              <>
+                                <span>&bull;</span>
+                                <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase border bg-gold-primary/20 border-gold-primary/40 text-gold-light">
+                                  Suffragan
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
 
@@ -1284,7 +1721,7 @@ export default function AdminDashboardPage() {
             )}
 
             {/* 3. GALLERY TAB */}
-            {activeTab === "gallery" && (
+            {activeTab === "gallery" && user?.role === "admin" && (
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between border-b border-gold-primary/5 pb-3">
                   <h3 className="font-cinzel text-base font-bold text-gold-primary">Museum Gallery Deposits</h3>
@@ -1347,7 +1784,7 @@ export default function AdminDashboardPage() {
             )}
 
             {/* 4. PARISHES CMS TAB */}
-            {activeTab === "parishes" && (
+            {activeTab === "parishes" && user?.role === "admin" && (
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between border-b border-gold-primary/5 pb-3">
                   <h3 className="font-cinzel text-base font-bold text-gold-primary">Parishes &amp; Diocesan Churches</h3>
@@ -1400,7 +1837,7 @@ export default function AdminDashboardPage() {
             )}
 
             {/* 5. VISITOR FEEDBACKS VIEW */}
-            {activeTab === "feedback" && (
+            {activeTab === "feedback" && user?.role === "admin" && (
               <div className="flex flex-col gap-6">
                 <div className="border-b border-gold-primary/5 pb-3">
                   <h3 className="font-cinzel text-base font-bold text-gold-primary">Visitor Feedback Log</h3>
@@ -1445,6 +1882,181 @@ export default function AdminDashboardPage() {
                 ) : (
                   <p className="text-mutedText text-xs italic text-center py-10">No visitor ratings submitted yet.</p>
                 )}
+              </div>
+            )}
+
+            {/* 6. NEWS TAB */}
+            {activeTab === "news" && user?.role === "admin" && (
+              <div className="flex flex-col gap-6">
+                <div className="flex items-center justify-between border-b border-gold-primary/5 pb-3">
+                  <h3 className="font-cinzel text-base font-bold text-gold-primary">Announcements &amp; News</h3>
+                  <button
+                    onClick={startCreateNews}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-gold-primary text-background font-bold text-[10px] uppercase hover:brightness-110 shadow-gold-glow transition-all"
+                  >
+                    <Plus size={12} /> Post Announcement
+                  </button>
+                </div>
+
+                {newsList.length > 0 ? (
+                  <div className="flex flex-col gap-4">
+                    {newsList.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-4 rounded-lg bg-surface border border-gold-primary/5 hover:border-gold-primary/15 transition-all flex items-center justify-between gap-4"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <h4 className="font-cinzel text-sm font-bold text-parchment leading-snug">{item.title}</h4>
+                          <p className="text-[10px] text-mutedText italic">{item.titleMalayalam}</p>
+                          <div className="flex items-center gap-3 text-[10px] text-mutedText mt-1">
+                            <span>{new Date(item.date).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => startEditNews(item)}
+                            className="p-2 bg-background hover:bg-cardElevated border border-gold-primary/15 hover:border-gold-primary/45 rounded text-gold-primary transition-all"
+                          >
+                            <Edit size={12} />
+                          </button>
+                          <button
+                            onClick={() => deleteNews(item.id)}
+                            className="p-2 bg-background hover:bg-red-950/25 border border-red-500/10 hover:border-red-500/40 rounded text-red-400 transition-all"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-mutedText text-xs italic text-center py-10">No announcements posted yet.</p>
+                )}
+              </div>
+            )}
+
+            {/* 7. MANAGE USERS TAB */}
+            {activeTab === "users" && user?.role === "admin" && (
+              <div className="flex flex-col gap-8">
+                
+                {/* 7a. User account creator form */}
+                <form onSubmit={saveUser} className="flex flex-col gap-5 p-5 rounded-lg bg-surface border border-gold-primary/10">
+                  <h3 className="font-cinzel text-sm font-bold text-gold-primary border-b border-gold-primary/10 pb-2.5">
+                    Create New Archivist / Author Account
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[9px] uppercase font-bold text-gold-primary">Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        placeholder="e.g. Deacon Liswin"
+                        className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[9px] uppercase font-bold text-gold-primary">Username</label>
+                      <input
+                        type="text"
+                        required
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        placeholder="e.g. liswin_author"
+                        className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[9px] uppercase font-bold text-gold-primary">Password</label>
+                      <input
+                        type="password"
+                        required
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] uppercase font-bold text-gold-primary">Assign Role:</span>
+                      <label className="flex items-center gap-1.5 text-xs text-parchment cursor-pointer">
+                        <input
+                          type="radio"
+                          name="newRole"
+                          value="author"
+                          checked={newRole === "author"}
+                          onChange={() => setNewRole("author")}
+                          className="accent-gold-primary mr-1"
+                        />
+                        Author (Can only save drafts for review)
+                      </label>
+                      <label className="flex items-center gap-1.5 text-xs text-parchment cursor-pointer">
+                        <input
+                          type="radio"
+                          name="newRole"
+                          value="admin"
+                          checked={newRole === "admin"}
+                          onChange={() => setNewRole("admin")}
+                          className="accent-gold-primary mr-1"
+                        />
+                        Administrator (Full CMS access &amp; verification rights)
+                      </label>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={savingUser}
+                      className="px-5 py-2.5 rounded bg-gold-primary hover:brightness-110 text-background text-xs font-bold uppercase tracking-wider shadow-gold-glow"
+                    >
+                      {savingUser ? "Creating Account..." : "Create Account"}
+                    </button>
+                  </div>
+                </form>
+
+                {/* 7b. Users List */}
+                <div className="flex flex-col gap-4">
+                  <h3 className="font-cinzel text-sm font-bold text-gold-primary border-b border-gold-primary/5 pb-2">
+                    Registered Accounts
+                  </h3>
+
+                  {usersList.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {usersList.map((acc) => (
+                        <div
+                          key={acc.id}
+                          className="p-4 rounded-lg bg-surface border border-gold-primary/5 flex items-center justify-between gap-4 shadow-sm"
+                        >
+                          <div className="flex flex-col">
+                            <h4 className="font-cinzel font-bold text-xs text-parchment">{acc.name}</h4>
+                            <span className="text-[10px] text-mutedText mt-0.5">@{acc.username}</span>
+                            <span className="text-[9px] uppercase font-extrabold tracking-widest text-gold-primary mt-1">
+                              {acc.role}
+                            </span>
+                          </div>
+
+                          {acc.id !== user?.id && (
+                            <button
+                              onClick={() => deleteUser(acc.id)}
+                              className="p-2 bg-background hover:bg-red-950/25 border border-red-500/10 hover:border-red-500/40 rounded text-red-400 transition-all font-bold"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-mutedText text-xs italic text-center">No other archivist accounts loaded.</p>
+                  )}
+                </div>
               </div>
             )}
           </div>

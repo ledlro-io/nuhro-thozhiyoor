@@ -174,7 +174,10 @@ export default function ArchivePage() {
                     href={`/posts/${post.slug}`}
                     className="text-[10px] font-bold text-gold-primary hover:text-gold-light uppercase tracking-wider flex items-center gap-1 hover:translate-x-0.5 transition-all"
                   >
-                    {t("Read Post", "വായിക്കുക")} <BookOpen size={11} />
+                    {post.category === "Manuscripts"
+                      ? t("Read Manuscript", "കൈയെഴുത്തുപ്രതി വായിക്കുക")
+                      : t("Read Post", "ലേഖനം വായിക്കുക")}{" "}
+                    <BookOpen size={11} />
                   </Link>
                 </div>
               </div>

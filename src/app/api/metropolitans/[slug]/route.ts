@@ -44,6 +44,13 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
       order,
       remembranceMonth,
       remembranceDay,
+      dob,
+      dod,
+      consecration,
+      predecessor,
+      successor,
+      coverImageUrl,
+      isSuffragan,
     } = await req.json();
 
     const existing = await prisma.metropolitan.findUnique({
@@ -68,9 +75,16 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
         biography,
         biographyMalayalam,
         imageUrl: imageUrl || null,
+        coverImageUrl: coverImageUrl || null,
+        isSuffragan: Boolean(isSuffragan),
         order: parseInt(order) || existing.order,
         remembranceMonth: remembranceMonth ? parseInt(remembranceMonth) : null,
         remembranceDay: remembranceDay ? parseInt(remembranceDay) : null,
+        dob: dob || null,
+        dod: dod || null,
+        consecration: consecration || null,
+        predecessor: predecessor || null,
+        successor: successor || null,
       },
     });
 

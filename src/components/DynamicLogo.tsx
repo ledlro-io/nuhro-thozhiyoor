@@ -55,55 +55,13 @@ export default function DynamicLogo() {
           {/* Pulsing glow ring inside */}
           <div className="absolute inset-1 rounded-full border border-gold-primary/10 animate-ping" style={{ animationDuration: "3s" }} />
 
-          {/* Syriac Cross SVG */}
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="url(#goldGradient)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="z-10 transition-transform duration-500 group-hover:scale-110"
-          >
-            <defs>
-              <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#f0d5a3" />
-                <stop offset="50%" stopColor="#e2b56f" />
-                <stop offset="100%" stopColor="#cfa24f" />
-              </linearGradient>
-            </defs>
-            {/* Elegant Syriac Cross design with three points on each arm */}
-            {/* Center block */}
-            <rect x="11.5" y="11.5" width="1" height="1" fill="#e2b56f" />
-            {/* Vertical stem */}
-            <path d="M12 4v16" />
-            {/* Horizontal beam */}
-            <path d="M4 12h16" />
-            
-            {/* Trinity Buds (Tri-points) on each of the 4 ends */}
-            {/* Top */}
-            <circle cx="12" cy="3" r="0.75" fill="#e2b56f" />
-            <circle cx="11" cy="4" r="0.5" fill="#e2b56f" />
-            <circle cx="13" cy="4" r="0.5" fill="#e2b56f" />
-            
-            {/* Bottom */}
-            <circle cx="12" cy="21" r="0.75" fill="#e2b56f" />
-            <circle cx="11" cy="20" r="0.5" fill="#e2b56f" />
-            <circle cx="13" cy="20" r="0.5" fill="#e2b56f" />
-
-            {/* Left */}
-            <circle cx="3" cy="12" r="0.75" fill="#e2b56f" />
-            <circle cx="4" cy="11" r="0.5" fill="#e2b56f" />
-            <circle cx="4" cy="12" r="0.5" fill="#e2b56f" /> {/** duplicate but smaller, to align */}
-            <circle cx="4" cy="13" r="0.5" fill="#e2b56f" />
-
-            {/* Right */}
-            <circle cx="21" cy="12" r="0.75" fill="#e2b56f" />
-            <circle cx="20" cy="11" r="0.5" fill="#e2b56f" />
-            <circle cx="20" cy="13" r="0.5" fill="#e2b56f" />
-          </svg>
+          {/* Syriac Cross SVG replaced with our beautiful custom logo.jpg */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.jpg"
+            alt="Nuhro Thozhiyoor Logo"
+            className="w-full h-full object-cover rounded-full z-10 transition-transform duration-500 group-hover:scale-110"
+          />
         </div>
       </div>
 

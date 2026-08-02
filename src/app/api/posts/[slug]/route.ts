@@ -8,6 +8,14 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     const { slug } = params;
     const post = await prisma.post.findUnique({
       where: { slug },
+      include: {
+        author: {
+          select: {
+            name: true,
+            role: true,
+          }
+        }
+      }
     });
 
     if (!post) {
@@ -16,7 +24,12 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
 
     if (!post.published) {
       const session = getSessionUser(req);
-      if (!session || session.role !== "admin") {
+      if (!session) {
+        return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      }
+      
+      // Authors can only view their own drafts
+      if (session.role === "author" && post.authorId !== session.userId) {
         return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
     }
@@ -27,11 +40,11 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
   }
 }
 
-// Secure PUT: Update a post
+// Secure PUT: Update a post (with author verification locks)
 export async function PUT(req: Request, { params }: { params: { slug: string } }) {
   try {
     const session = getSessionUser(req);
-    if (!session || session.role !== "admin") {
+    if (!session || (session.role !== "admin" && session.role !== "author")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -57,6 +70,15 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    // Authors can ONLY edit their own posts
+    if (session.role === "author" && existing.authorId !== session.userId) {
+      return NextResponse.json({ error: "Unauthorized: You can only edit your own posts" }, { status: 403 });
+    }
+
+    // Authors can only save drafts (requires admin verification to publish)
+    const isAuthor = session.role === "author";
+    const publishVal = isAuthor ? false : published;
+
     const updatedPost = await prisma.post.update({
       where: { slug },
       data: {
@@ -69,8 +91,8 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
         imageUrl: imageUrl || null,
         category,
         tags: tags || "",
-        published,
-        publishedAt: published && !existing.published ? new Date() : existing.publishedAt,
+        published: publishVal,
+        publishedAt: publishVal && !existing.published ? new Date() : existing.publishedAt,
       },
     });
 
@@ -81,12 +103,14 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
   }
 }
 
-// Secure DELETE: Delete a post
+// Secure DELETE: Delete a post (Admin only!)
 export async function DELETE(req: Request, { params }: { params: { slug: string } }) {
   try {
     const session = getSessionUser(req);
+    
+    // STRICT RULE: Authors are BLOCKED from deleting posts!
     if (!session || session.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized: Only administrators can delete archive posts" }, { status: 403 });
     }
 
     const { slug } = params;

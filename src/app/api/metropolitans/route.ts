@@ -39,6 +39,13 @@ export async function POST(req: Request) {
       order,
       remembranceMonth,
       remembranceDay,
+      dob,
+      dod,
+      consecration,
+      predecessor,
+      successor,
+      coverImageUrl,
+      isSuffragan,
     } = await req.json();
 
     if (
@@ -80,9 +87,16 @@ export async function POST(req: Request) {
         biography,
         biographyMalayalam,
         imageUrl: imageUrl || null,
+        coverImageUrl: coverImageUrl || null,
+        isSuffragan: Boolean(isSuffragan),
         order: parseInt(order) || 99,
         remembranceMonth: remembranceMonth ? parseInt(remembranceMonth) : null,
         remembranceDay: remembranceDay ? parseInt(remembranceDay) : null,
+        dob: dob || null,
+        dod: dod || null,
+        consecration: consecration || null,
+        predecessor: predecessor || null,
+        successor: successor || null,
       },
     });
 

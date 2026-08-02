@@ -27,6 +27,7 @@ interface RichTextEditorProps {
   setImageUrl: (u: string) => void;
   onSave: (published: boolean) => void;
   isSaving: boolean;
+  isAdmin?: boolean;
 }
 
 export default function RichTextEditor({
@@ -52,6 +53,7 @@ export default function RichTextEditor({
   setImageUrl,
   onSave,
   isSaving,
+  isAdmin = true,
 }: RichTextEditorProps) {
   const [activeTab, setActiveTab] = useState<"edit-en" | "edit-ml" | "preview-en" | "preview-ml">("edit-en");
   const [showCheatsheet, setShowCheatsheet] = useState(false);
@@ -127,15 +129,17 @@ export default function RichTextEditor({
             disabled={isSaving}
             className="px-4 py-2 rounded-md bg-cardElevated hover:bg-cardElevated/80 border border-gold-primary/30 text-gold-primary text-xs font-bold uppercase tracking-widest disabled:opacity-50"
           >
-            Save Draft
+            {isAdmin ? "Save Draft" : "Submit for Review"}
           </button>
-          <button
-            onClick={() => onSave(true)}
-            disabled={isSaving}
-            className="px-5 py-2 rounded-md bg-gradient-to-r from-gold-primary to-gold-secondary text-background hover:brightness-110 text-xs font-extrabold uppercase tracking-widest disabled:opacity-50 shadow-gold-glow"
-          >
-            {isSaving ? "Publishing..." : "Publish"}
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => onSave(true)}
+              disabled={isSaving}
+              className="px-5 py-2 rounded-md bg-gradient-to-r from-gold-primary to-gold-secondary text-background hover:brightness-110 text-xs font-extrabold uppercase tracking-widest disabled:opacity-50 shadow-gold-glow"
+            >
+              {isSaving ? "Publishing..." : "Publish"}
+            </button>
+          )}
         </div>
       </div>
 
