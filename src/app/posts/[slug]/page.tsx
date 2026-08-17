@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
+import type { Metadata } from "next";
 
 async function getPost(slug: string) {
   try {
@@ -15,6 +16,48 @@ async function getPost(slug: string) {
   } catch (error) {
     return null;
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const post = await getPost(params.slug);
+
+  if (!post) {
+    return {
+      title: "Post Not Found | Nuhro Thozhiyoor",
+    };
+  }
+
+  const title = `${post.title} | Nuhro Thozhiyoor`;
+  const description = post.summary;
+  const imageUrl = post.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
 }
 
 export default async function PostDetailsPage({

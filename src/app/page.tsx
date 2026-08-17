@@ -283,9 +283,9 @@ export default async function HomePage() {
                 <Link
                   key={`${metro.id}-${idx}`}
                   href={`/metropolitans/${metro.slug}`}
-                  className="w-72 flex-shrink-0 bg-surface border border-gold-primary/15 hover:border-gold-primary/45 rounded-lg p-4 flex gap-4 items-center transition-all duration-300 hover:scale-102 glass-panel"
+                  className="w-60 flex-shrink-0 bg-surface/80 border border-gold-primary/10 hover:border-gold-primary/30 rounded-xl p-3 flex gap-3 items-center transition-all duration-300 hover:scale-[1.03] shadow-md hover:shadow-gold-glow/10 backdrop-blur-sm group"
                 >
-                  <div className="w-14 h-18 rounded overflow-hidden border border-gold-primary/20 bg-background flex-shrink-0">
+                  <div className="w-11 h-11 rounded-full overflow-hidden border border-gold-primary/20 bg-background flex-shrink-0 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={metro.imageUrl || "/logo.jpg"}
@@ -293,14 +293,11 @@ export default async function HomePage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="flex flex-col gap-1 overflow-hidden">
-                    <span className="text-[8px] font-bold text-gold-primary uppercase tracking-widest">
-                      {isMl ? `ക്രമം: ${metro.order}` : `Order: ${metro.order}`}
-                    </span>
-                    <h4 className="font-cinzel font-bold text-xs text-parchment truncate leading-tight">
+                  <div className="flex flex-col overflow-hidden min-w-0">
+                    <h4 className="font-cinzel font-bold text-xs text-parchment group-hover:text-gold-primary transition-colors truncate leading-tight">
                       {isMl ? metro.nameMalayalam : metro.name}
                     </h4>
-                    <span className="text-[9px] text-mutedText truncate">
+                    <span className="text-[9px] text-gold-primary/80 font-mono mt-0.5">
                       {metro.reignStart} – {metro.reignEnd}
                     </span>
                   </div>

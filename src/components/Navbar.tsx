@@ -18,6 +18,7 @@ export default function Navbar() {
     { href: "/about", label: t("About", "ചരിത്രം") },
     { href: "/metropolitans", label: t("Metropolitans", "മെത്രാപ്പോലീത്തമാർ") },
     { href: "/parishes", label: t("Parishes", "ഇടവകകൾ") },
+    { href: "/news", label: t("News", "വാർത്തകൾ") },
     { href: "/archive", label: t("Archive", "രേഖകൾ") },
     { href: "/timeline", label: t("Timeline", "നാൾവഴി") },
     { href: "/gallery", label: t("Gallery", "കാഴ്ചബംഗ്ലാവ്") },

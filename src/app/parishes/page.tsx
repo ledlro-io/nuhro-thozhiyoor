@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/components/LanguageContext";
 import {
   MapPin,
@@ -226,23 +227,42 @@ export default function ParishesPage() {
                 const isSelected = selectedParish?.id === p.id;
 
                 return (
-                  <button
+                  <div
                     key={p.id}
-                    onClick={() => setSelectedParish(p)}
-                    className={`p-4 rounded-lg border text-left transition-all duration-300 ${
+                    className={`p-4 rounded-lg border text-left transition-all duration-300 relative ${
                       isSelected
                         ? "border-gold-primary bg-gold-primary/5 shadow-md"
                         : "border-gold-primary/10 bg-surface hover:bg-cardElevated"
                     }`}
                   >
-                    <div className="font-cinzel text-xs font-bold text-parchment group-hover:text-gold-primary">
-                      {isMl ? p.nameMalayalam : p.name}
+                    <button
+                      onClick={() => setSelectedParish(p)}
+                      className="absolute inset-0 w-full h-full z-0 cursor-pointer bg-transparent border-0 outline-none"
+                      aria-label={`Select ${p.name}`}
+                    />
+                    
+                    <div className="relative z-10 flex flex-col gap-1 pointer-events-none">
+                      <div className="font-cinzel text-xs font-bold text-parchment">
+                        {isMl ? p.nameMalayalam : p.name}
+                      </div>
+
+                      <div className="text-[9px] text-gold-primary/80">
+                        {t("Established:", "സ്ഥാപിതം:")} {p.established}
+                      </div>
                     </div>
 
-                    <div className="text-[10px] text-gold-primary/80 mt-1">
-                      {t("Established:", "സ്ഥാപിതം:")} {p.established}
+                    <div className="relative z-10 flex justify-between items-center mt-2 border-t border-gold-primary/5 pt-2">
+                      <span className="text-[9px] text-mutedText pointer-events-none">
+                        {t("Vicar:", "വികാരി:")} {isMl ? p.vicarMalayalam : p.vicar}
+                      </span>
+                      <Link 
+                        href={`/parishes/${p.id}`}
+                        className="text-[9px] text-gold-primary hover:text-gold-light hover:underline font-bold flex items-center gap-0.5"
+                      >
+                        {t("Read History", "ചരിത്രം")} <ExternalLink size={8} />
+                      </Link>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
