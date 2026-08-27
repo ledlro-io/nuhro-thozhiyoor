@@ -277,27 +277,30 @@ export default async function HomePage() {
             <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0b0b12] to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0b0b12] to-transparent z-10 pointer-events-none" />
 
-            <div className="animate-marquee-scroll flex gap-6 py-2">
+            <div className="animate-marquee-scroll flex gap-8 py-4">
               {/* Double the array for infinite scrolling effect */}
               {[...allMetropolitans, ...allMetropolitans].map((metro, idx) => (
                 <Link
                   key={`${metro.id}-${idx}`}
                   href={`/metropolitans/${metro.slug}`}
-                  className="w-60 flex-shrink-0 bg-surface/80 border border-gold-primary/10 hover:border-gold-primary/30 rounded-xl p-3 flex gap-3 items-center transition-all duration-300 hover:scale-[1.03] shadow-md hover:shadow-gold-glow/10 backdrop-blur-sm group"
+                  className="w-80 flex-shrink-0 bg-surface/90 border border-gold-primary/15 hover:border-gold-primary/45 rounded-xl p-5 flex gap-4 items-center transition-all duration-300 hover:scale-[1.03] shadow-lg hover:shadow-gold-glow/20 backdrop-blur-md group"
                 >
-                  <div className="w-11 h-11 rounded-full overflow-hidden border border-gold-primary/20 bg-background flex-shrink-0 relative">
+                  <div className="w-20 h-24 rounded-lg overflow-hidden border border-gold-primary/20 bg-background flex-shrink-0 relative shadow-inner">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={metro.imageUrl || "/logo.jpg"}
                       alt={metro.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-                  <div className="flex flex-col overflow-hidden min-w-0">
-                    <h4 className="font-cinzel font-bold text-xs text-parchment group-hover:text-gold-primary transition-colors truncate leading-tight">
+                  <div className="flex flex-col gap-1.5 overflow-hidden min-w-0">
+                    <h4 className="font-cinzel font-extrabold text-sm text-gold-light group-hover:text-gold-primary transition-colors truncate leading-snug">
                       {isMl ? metro.nameMalayalam : metro.name}
                     </h4>
-                    <span className="text-[9px] text-gold-primary/80 font-mono mt-0.5">
+                    <span className="text-[10px] text-mutedText truncate italic">
+                      {isMl ? metro.titleMalayalam : metro.title}
+                    </span>
+                    <span className="text-xs text-gold-primary font-mono font-bold mt-1 bg-gold-primary/5 px-2 py-0.5 rounded border border-gold-primary/10 w-fit">
                       {metro.reignStart} – {metro.reignEnd}
                     </span>
                   </div>

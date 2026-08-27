@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, FileText, Users, Image as ImageIcon, MapPin, MessageSquare, Plus, Trash2, Edit, AlertCircle, CheckCircle, Star } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Post {
   id: string;
@@ -1028,27 +1029,18 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Profile Portrait Image URL</label>
-                  <input
-                    type="text"
-                    value={metroImageUrl}
-                    onChange={(e) => setMetroImageUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Cover Banner Image URL</label>
-                  <input
-                    type="text"
-                    value={metroCoverImageUrl}
-                    onChange={(e) => setMetroCoverImageUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
+                <ImageUpload
+                  label="Profile Portrait Image"
+                  value={metroImageUrl}
+                  onChange={setMetroImageUrl}
+                  placeholder="https://images.unsplash.com/..."
+                />
+                <ImageUpload
+                  label="Cover Banner Image"
+                  value={metroCoverImageUrl}
+                  onChange={setMetroCoverImageUrl}
+                  placeholder="https://images.unsplash.com/..."
+                />
               </div>
 
               <div className="flex items-center gap-2.5 p-3 rounded bg-background/50 border border-gold-primary/10">
@@ -1168,17 +1160,12 @@ export default function AdminDashboardPage() {
                 </select>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Image URL</label>
-                <input
-                  type="text"
-                  required
-                  value={galleryImageUrl}
-                  onChange={(e) => setGalleryImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                />
-              </div>
+              <ImageUpload
+                label="Gallery Image"
+                value={galleryImageUrl}
+                onChange={setGalleryImageUrl}
+                placeholder="https://images.unsplash.com/..."
+              />
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[9px] uppercase font-bold text-gold-primary">Historical Description (English)</label>
@@ -1356,16 +1343,12 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Parish Image URL</label>
-                <input
-                  type="text"
-                  value={parishImageUrl}
-                  onChange={(e) => setParishImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                />
-              </div>
+              <ImageUpload
+                label="Parish Image"
+                value={parishImageUrl}
+                onChange={setParishImageUrl}
+                placeholder="https://images.unsplash.com/..."
+              />
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[9px] uppercase font-bold text-gold-primary">History / Narrative (English)</label>
@@ -1434,16 +1417,12 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Image URL</label>
-                <input
-                  type="text"
-                  value={newsImageUrl}
-                  onChange={(e) => setNewsImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                />
-              </div>
+              <ImageUpload
+                label="News Image"
+                value={newsImageUrl}
+                onChange={setNewsImageUrl}
+                placeholder="https://images.unsplash.com/..."
+              />
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[9px] uppercase font-bold text-gold-primary">English Content (Markdown supported)</label>

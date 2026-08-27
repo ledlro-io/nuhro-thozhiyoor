@@ -32,15 +32,15 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${metropolitan.title} ${metropolitan.name}`;
+  const name = metropolitan.name;
   const description = metropolitan.bioSummary;
   const imageUrl = metropolitan.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800";
 
   return {
-    title: `${title} | Nuhro Thozhiyoor`,
+    title: `${name} | Nuhro Thozhiyoor`,
     description,
     openGraph: {
-      title,
+      title: name,
       description,
       type: "profile",
       images: [
@@ -48,13 +48,13 @@ export async function generateMetadata({
           url: imageUrl,
           width: 800,
           height: 600,
-          alt: title,
+          alt: name,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: name,
       description,
       images: [imageUrl],
     },
@@ -169,7 +169,7 @@ export default async function MetropolitanDetailsPage({
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-8 text-parchment font-jakarta animate-fade-in">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 text-parchment font-jakarta animate-fade-in">
       {/* Back link */}
       <Link
         href="/metropolitans"
@@ -180,7 +180,7 @@ export default async function MetropolitanDetailsPage({
 
       <article className="relative rounded-2xl bg-surface border border-gold-primary/10 overflow-hidden shadow-2xl manuscript-border mb-8">
         {/* 1. Cover Photo Banner */}
-        <div className="h-48 sm:h-72 w-full relative overflow-hidden bg-background">
+        <div className="h-48 sm:h-80 w-full relative overflow-hidden bg-background">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={coverUrl}
@@ -191,9 +191,9 @@ export default async function MetropolitanDetailsPage({
         </div>
 
         {/* 2. Profile Overlap & Title Header */}
-        <div className="px-6 sm:px-10 pb-6 relative z-10 -mt-16 sm:-mt-24 flex flex-col md:flex-row gap-6 items-start md:items-end">
+        <div className="px-6 sm:px-10 pb-6 relative z-10 -mt-24 sm:-mt-36 flex flex-col md:flex-row gap-8 items-start md:items-end">
           {/* Portrait Image */}
-          <div className="w-32 h-44 sm:w-44 sm:h-56 rounded-lg overflow-hidden border-2 border-gold-primary/30 bg-background shadow-gold-glow flex-shrink-0 relative z-20 manuscript-border">
+          <div className="w-40 h-52 sm:w-56 sm:h-72 rounded-xl overflow-hidden border-2 border-gold-primary/30 bg-background shadow-gold-glow-lg flex-shrink-0 relative z-20 manuscript-border transition-all duration-300 hover:scale-[1.02]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={metropolitan.imageUrl || "/logo.jpg"}

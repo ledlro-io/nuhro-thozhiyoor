@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Eye, Edit3, HelpCircle, Globe } from "lucide-react";
+import ImageUpload from "./ImageUpload";
 
 interface RichTextEditorProps {
   title: string;
@@ -286,16 +287,12 @@ export default function RichTextEditor({
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] uppercase font-bold text-gold-primary">Banner Image URL</label>
-            <input
-              type="text"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full px-4 py-2 rounded-lg bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
-            />
-          </div>
+          <ImageUpload
+            label="Banner Image"
+            value={imageUrl}
+            onChange={setImageUrl}
+            placeholder="https://images.unsplash.com/..."
+          />
 
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] uppercase font-bold text-gold-primary">English Summary</label>
