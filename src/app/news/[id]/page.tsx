@@ -49,7 +49,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: isoDate,
       modifiedTime: isoDate,
-      authors: ["Malabar Independent Syrian Church"],
+      authors: ["Nuhro Thozhiyoor"],
       siteName: "Nuhro Thozhiyoor",
       images: [
         {
@@ -110,7 +110,7 @@ export default async function NewsDetailsPage({
     "dateModified": isoDate,
     "author": [{
       "@type": "Organization",
-      "name": "Malabar Independent Syrian Church",
+      "name": "Nuhro Thozhiyoor",
       "url": "https://nuhro-thozhiyoor.vercel.app"
     }],
     "publisher": {
@@ -173,7 +173,7 @@ export default async function NewsDetailsPage({
         <div className="flex flex-col gap-4 border-b border-gold-primary/10 pb-6">
           <div className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-primary">
             <span className="px-3 py-1 rounded-full bg-gold-primary/10 border border-gold-primary/20 text-[10px]">
-              {isMl ? "സഭാ അറിയിപ്പ്" : "Official Diocese Dispatch"}
+              {isMl ? "വാർത്ത / അറിയിപ്പ്" : "News & Updates"}
             </span>
             <span className="text-mutedText">&bull;</span>
             <time dateTime={isoDate} className="flex items-center gap-1.5 text-mutedText text-xs font-mono">
@@ -211,11 +211,11 @@ export default async function NewsDetailsPage({
           </ReactMarkdown>
         </div>
 
-        {/* Communique footer note */}
+        {/* Publication footer note */}
         <div className="border-t border-gold-primary/15 pt-6 mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-mutedText bg-background/40 p-4 rounded-xl border">
           <div>
-            <p className="font-bold text-gold-primary">Malabar Independent Syrian Church</p>
-            <p className="text-[11px] mt-0.5">Thozhiyoor Sabha &bull; Diocesan Media & Archive Centre</p>
+            <p className="font-bold text-gold-primary">Nuhro Thozhiyoor</p>
+            <p className="text-[11px] mt-0.5">Independent Digital Heritage & Research Archive</p>
           </div>
           <time dateTime={isoDate} className="text-[11px] font-mono text-gold-primary/70">
             Published: {readableDate}
