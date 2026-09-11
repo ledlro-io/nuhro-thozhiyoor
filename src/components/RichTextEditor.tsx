@@ -87,16 +87,6 @@ export default function RichTextEditor({
             <Edit3 size={14} /> English Editor
           </button>
           <button
-            onClick={() => setActiveTab("edit-ml")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeTab === "edit-ml"
-                ? "bg-gold-primary text-background"
-                : "bg-surface hover:bg-cardElevated text-gold-primary"
-            }`}
-          >
-            <Edit3 size={14} /> Malayalam Editor (മലയാളം)
-          </button>
-          <button
             onClick={() => setActiveTab("preview-en")}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
               activeTab === "preview-en"
@@ -105,16 +95,6 @@ export default function RichTextEditor({
             }`}
           >
             <Eye size={14} /> Preview EN
-          </button>
-          <button
-            onClick={() => setActiveTab("preview-ml")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors ${
-              activeTab === "preview-ml"
-                ? "bg-gold-primary text-background"
-                : "bg-surface hover:bg-cardElevated text-gold-primary"
-            }`}
-          >
-            <Eye size={14} /> Preview ML
           </button>
         </div>
 
@@ -204,34 +184,6 @@ export default function RichTextEditor({
             </div>
           )}
 
-          {activeTab === "edit-ml" && (
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] uppercase font-bold text-gold-primary">Malayalam Title (മലയാളം തലക്കെട്ട്)</label>
-                <input
-                  type="text"
-                  value={titleMalayalam}
-                  onChange={(e) => setTitleMalayalam(e.target.value)}
-                  placeholder="ഉദാഹരണം: തൊഴിയൂർ ഭദ്രാസനത്തിന്റെ ചരിത്രം"
-                  className="w-full px-4 py-2.5 rounded-lg bg-surface border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-sm text-parchment transition-all"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] uppercase font-bold text-gold-primary">Malayalam Content (മലയാളം ഉള്ളടക്കം)</label>
-                <textarea
-                  value={contentMalayalam}
-                  onChange={(e) => setContentMalayalam(e.target.value)}
-                  rows={18}
-                  placeholder="ലേഖനത്തിന്റെ ഉള്ളടക്കം ഇവിടെ ടൈപ്പ് ചെയ്യുക (Markdown പിന്തുണയ്ക്കുന്നു)..."
-                  className="w-full px-4 py-3 rounded-lg bg-surface border border-gold-primary/20 focus:border-gold-primary/50 outline-none font-mono text-xs text-parchment leading-relaxed transition-all resize-y"
-                  required
-                />
-              </div>
-            </div>
-          )}
-
           {/* Preview Windows */}
           {activeTab === "preview-en" && (
             <div className="p-8 rounded-lg bg-surface border border-gold-primary/10 max-w-none shadow-2xl min-h-[400px]">
@@ -239,18 +191,6 @@ export default function RichTextEditor({
               {summary && <p className="text-mutedText italic text-sm border-l border-gold-primary/30 pl-3 mb-6">{summary}</p>}
               <div className="prose prose-invert prose-sm">
                 <ReactMarkdown>{content || "*No English content written yet.*"}</ReactMarkdown>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "preview-ml" && (
-            <div className="p-8 rounded-lg bg-surface border border-gold-primary/10 max-w-none shadow-2xl min-h-[400px]">
-              <h1 className="font-cinzel text-2xl text-gold-primary mb-4">{titleMalayalam || "തലക്കെട്ടില്ലാത്ത പോസ്റ്റ്"}</h1>
-              {summaryMalayalam && (
-                <p className="text-mutedText italic text-sm border-l border-gold-primary/30 pl-3 mb-6">{summaryMalayalam}</p>
-              )}
-              <div className="prose prose-invert prose-sm">
-                <ReactMarkdown>{contentMalayalam || "*മലയാളം ഉള്ളടക്കം ചേർത്തിട്ടില്ല.*"}</ReactMarkdown>
               </div>
             </div>
           )}
@@ -301,18 +241,6 @@ export default function RichTextEditor({
               onChange={(e) => setSummary(e.target.value)}
               rows={3}
               placeholder="Brief English summary for lists..."
-              className="w-full px-3 py-2 rounded-lg bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] uppercase font-bold text-gold-primary">Malayalam Summary (മലയാളം വിവരണം)</label>
-            <textarea
-              value={summaryMalayalam}
-              onChange={(e) => setSummaryMalayalam(e.target.value)}
-              rows={3}
-              placeholder="ലേഖനത്തിന്റെ ചുരുക്കം മലയാളത്തിൽ എഴുതുക..."
               className="w-full px-3 py-2 rounded-lg bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal"
               required
             />

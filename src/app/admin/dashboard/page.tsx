@@ -309,12 +309,12 @@ export default function AdminDashboardPage() {
     try {
       const payload = {
         title: postTitle,
-        titleMalayalam: postTitleMl,
+        titleMalayalam: postTitleMl || postTitle,
         slug: postSlug,
         summary: postSummary,
-        summaryMalayalam: postSummaryMl,
+        summaryMalayalam: postSummaryMl || postSummary,
         content: postContent,
-        contentMalayalam: postContentMl,
+        contentMalayalam: postContentMl || postContent,
         category: postCategory,
         tags: postTags,
         imageUrl: postImageUrl,
@@ -418,16 +418,16 @@ export default function AdminDashboardPage() {
     try {
       const payload = {
         name: metroName,
-        nameMalayalam: metroNameMl,
+        nameMalayalam: metroNameMl || metroName,
         slug: metroSlug,
         title: metroTitle,
-        titleMalayalam: metroTitleMl,
+        titleMalayalam: metroTitleMl || metroTitle,
         reignStart: metroReignStart,
         reignEnd: metroReignEnd,
         bioSummary: metroBioSummary,
-        bioSummaryMalayalam: metroBioSummaryMl,
+        bioSummaryMalayalam: metroBioSummaryMl || metroBioSummary,
         biography: metroBiography,
-        biographyMalayalam: metroBiographyMl,
+        biographyMalayalam: metroBiographyMl || metroBiography,
         imageUrl: metroImageUrl,
         coverImageUrl: metroCoverImageUrl || null,
         isSuffragan: metroIsSuffragan,
@@ -522,18 +522,18 @@ export default function AdminDashboardPage() {
     try {
       const payload = {
         name: parishName,
-        nameMalayalam: parishNameMl,
+        nameMalayalam: parishNameMl || parishName,
         established: parishEstablished,
         vicar: parishVicar,
-        vicarMalayalam: parishVicarMl,
+        vicarMalayalam: parishVicarMl || parishVicar,
         contact: parishContact,
         address: parishAddress,
-        addressMalayalam: parishAddressMl,
+        addressMalayalam: parishAddressMl || parishAddress,
         latitude: parishLat ? parseFloat(parishLat) : null,
         longitude: parishLng ? parseFloat(parishLng) : null,
         mapsUrl: parishMapsUrl,
         history: parishHistory,
-        historyMalayalam: parishHistoryMl,
+        historyMalayalam: parishHistoryMl || parishHistory,
         imageUrl: parishImageUrl,
       };
 
@@ -581,9 +581,9 @@ export default function AdminDashboardPage() {
     try {
       const payload = {
         title: galleryTitle,
-        titleMalayalam: galleryTitleMl,
+        titleMalayalam: galleryTitleMl || galleryTitle,
         description: galleryDescription,
-        descriptionMalayalam: galleryDescriptionMl,
+        descriptionMalayalam: galleryDescriptionMl || galleryDescription,
         category: galleryCategory,
         imageUrl: galleryImageUrl,
       };
@@ -640,9 +640,9 @@ export default function AdminDashboardPage() {
     try {
       const payload = {
         title: newsTitle,
-        titleMalayalam: newsTitleMl,
+        titleMalayalam: newsTitleMl || newsTitle,
         content: newsContent,
-        contentMalayalam: newsContentMl,
+        contentMalayalam: newsContentMl || newsContent,
         imageUrl: newsImageUrl,
       };
 
@@ -842,33 +842,19 @@ export default function AdminDashboardPage() {
                 {editorMode === "create_metro" ? "Add Metropolitan Biography" : "Edit Metropolitan Biography"}
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Metropolitan Name (English)</label>
-                  <input
-                    type="text"
-                    required
-                    value={metroName}
-                    onChange={(e) => {
-                      setMetroName(e.target.value);
-                      setMetroSlug(e.target.value.toLowerCase().replace(/[\s_]+/g, "-").replace(/[^\w-]/g, ""));
-                    }}
-                    placeholder="e.g. Abraham Mar Koorilose I"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Metropolitan Name (Malayalam)</label>
-                  <input
-                    type="text"
-                    required
-                    value={metroNameMl}
-                    onChange={(e) => setMetroNameMl(e.target.value)}
-                    placeholder="ഉദാ: അബ്രഹാം മാർ കൂറിലോസ് I"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Metropolitan Name</label>
+                <input
+                  type="text"
+                  required
+                  value={metroName}
+                  onChange={(e) => {
+                    setMetroName(e.target.value);
+                    setMetroSlug(e.target.value.toLowerCase().replace(/[\s_]+/g, "-").replace(/[^\w-]/g, ""));
+                  }}
+                  placeholder="e.g. Abraham Mar Koorilose I"
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
+                />
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -882,30 +868,16 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Formal Title (English)</label>
-                  <input
-                    type="text"
-                    required
-                    value={metroTitle}
-                    onChange={(e) => setMetroTitle(e.target.value)}
-                    placeholder="e.g. First Metropolitan of Thozhiyoor"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Formal Title (Malayalam)</label>
-                  <input
-                    type="text"
-                    required
-                    value={metroTitleMl}
-                    onChange={(e) => setMetroTitleMl(e.target.value)}
-                    placeholder="ഉദാ: തൊഴിയൂരിന്റെ ഒന്നാമത് മെത്രാപ്പോലീത്ത"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Formal Title</label>
+                <input
+                  type="text"
+                  required
+                  value={metroTitle}
+                  onChange={(e) => setMetroTitle(e.target.value)}
+                  placeholder="e.g. First Metropolitan of Thozhiyoor"
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment transition-all"
+                />
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1057,7 +1029,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">English Summary</label>
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Summary Overview</label>
                 <textarea
                   required
                   rows={2}
@@ -1069,37 +1041,13 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Malayalam Summary (മലയാളം ചുരുക്കം)</label>
-                <textarea
-                  required
-                  rows={2}
-                  value={metroBioSummaryMl}
-                  onChange={(e) => setMetroBioSummaryMl(e.target.value)}
-                  placeholder="മലയാളത്തിലുള്ള ചെറിയ വിവരണം നൽകുക..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">English Biography (Markdown supported)</label>
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Biography (Markdown supported)</label>
                 <textarea
                   required
                   rows={8}
                   value={metroBiography}
                   onChange={(e) => setMetroBiography(e.target.value)}
                   placeholder="Write full biography text here..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none font-mono text-xs text-parchment leading-relaxed transition-all resize-y"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Malayalam Biography (മലയാളം ഉള്ളടക്കം)</label>
-                <textarea
-                  required
-                  rows={8}
-                  value={metroBiographyMl}
-                  onChange={(e) => setMetroBiographyMl(e.target.value)}
-                  placeholder="വിശദമായ ചരിത്രം മലയാളത്തിൽ എഴുതുക..."
                   className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none font-mono text-xs text-parchment leading-relaxed transition-all resize-y"
                 />
               </div>
@@ -1121,30 +1069,16 @@ export default function AdminDashboardPage() {
                 Deposit Museum Gallery Item
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Item Title (English)</label>
-                  <input
-                    type="text"
-                    required
-                    value={galleryTitle}
-                    onChange={(e) => setGalleryTitle(e.target.value)}
-                    placeholder="e.g. Ancient Liturgical Chalice"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Item Title (Malayalam)</label>
-                  <input
-                    type="text"
-                    required
-                    value={galleryTitleMl}
-                    onChange={(e) => setGalleryTitleMl(e.target.value)}
-                    placeholder="ഉദാ: പുരാതന കാസ"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Item Title</label>
+                <input
+                  type="text"
+                  required
+                  value={galleryTitle}
+                  onChange={(e) => setGalleryTitle(e.target.value)}
+                  placeholder="e.g. Ancient Liturgical Chalice"
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                />
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -1168,25 +1102,13 @@ export default function AdminDashboardPage() {
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Historical Description (English)</label>
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Historical Description</label>
                 <textarea
                   required
                   rows={3}
                   value={galleryDescription}
                   onChange={(e) => setGalleryDescription(e.target.value)}
                   placeholder="Describe the artifact history and details..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Historical Description (Malayalam)</label>
-                <textarea
-                  required
-                  rows={3}
-                  value={galleryDescriptionMl}
-                  onChange={(e) => setGalleryDescriptionMl(e.target.value)}
-                  placeholder="വിവരണം മലയാളത്തിൽ എഴുതുക..."
                   className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal"
                 />
               </div>

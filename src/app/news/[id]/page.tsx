@@ -79,8 +79,36 @@ export default async function NewsDetailsPage({
   const title = isMl ? newsItem.titleMalayalam : newsItem.title;
   const content = isMl ? newsItem.contentMalayalam : newsItem.content;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": title,
+    "image": [
+      newsItem.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800"
+    ],
+    "datePublished": newsItem.date,
+    "dateModified": newsItem.date,
+    "author": [{
+      "@type": "Organization",
+      "name": "Malabar Independent Syrian Church",
+      "url": "https://nuhro-thozhiyoor.vercel.app"
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Nuhro Thozhiyoor Heritage Archive",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nuhro-thozhiyoor.vercel.app/logo.jpg"
+      }
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 text-parchment font-jakarta animate-fade-in">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Back button */}
       <Link
         href="/news"
