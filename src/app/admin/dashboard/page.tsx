@@ -1130,33 +1130,19 @@ export default function AdminDashboardPage() {
                 {editorMode === "create_parish" ? "Establish New Parish Record" : "Edit Parish Record"}
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Parish Name (English)</label>
-                  <input
-                    type="text"
-                    required
-                    value={parishName}
-                    onChange={(e) => parishSetName(e.target.value)}
-                    placeholder="e.g. St. George's Cathedral, Thozhiyur"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Parish Name (Malayalam)</label>
-                  <input
-                    type="text"
-                    required
-                    value={parishNameMl}
-                    onChange={(e) => setParishNameMl(e.target.value)}
-                    placeholder="ഉദാ: സെന്റ് ജോർജ്ജ് കത്തീഡ്രൽ, തൊഴിയൂർ"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Parish Name</label>
+                <input
+                  type="text"
+                  required
+                  value={parishName}
+                  onChange={(e) => parishSetName(e.target.value)}
+                  placeholder="e.g. St. George's Cathedral, Thozhiyur"
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[9px] uppercase font-bold text-gold-primary">Established Year</label>
                   <input
@@ -1170,25 +1156,13 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Vicar Name (English)</label>
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Vicar Name</label>
                   <input
                     type="text"
                     required
                     value={parishVicar}
                     onChange={(e) => setParishVicar(e.target.value)}
                     placeholder="Very Rev. Fr. Mathew Thomas"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Vicar Name (Malayalam)</label>
-                  <input
-                    type="text"
-                    required
-                    value={parishVicarMl}
-                    onChange={(e) => setParishVicarMl(e.target.value)}
-                    placeholder="വെരി. റവ. ഫാ. മാത്യു തോമസ്"
                     className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
                   />
                 </div>
@@ -1241,28 +1215,15 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Address (English)</label>
-                  <textarea
-                    required
-                    rows={2}
-                    value={parishAddress}
-                    onChange={(e) => setParishAddress(e.target.value)}
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal resize-none"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Address (Malayalam)</label>
-                  <textarea
-                    required
-                    rows={2}
-                    value={parishAddressMl}
-                    onChange={(e) => setParishAddressMl(e.target.value)}
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal resize-none"
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Address</label>
+                <textarea
+                  required
+                  rows={2}
+                  value={parishAddress}
+                  onChange={(e) => setParishAddress(e.target.value)}
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal resize-none"
+                />
               </div>
 
               <ImageUpload
@@ -1273,25 +1234,13 @@ export default function AdminDashboardPage() {
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">History / Narrative (English)</label>
+                <label className="text-[9px] uppercase font-bold text-gold-primary">History / Narrative</label>
                 <textarea
                   required
                   rows={4}
                   value={parishHistory}
                   onChange={(e) => setParishHistory(e.target.value)}
                   placeholder="Historical details of the parish church..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-relaxed resize-none"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">History / Narrative (Malayalam)</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={parishHistoryMl}
-                  onChange={(e) => setParishHistoryMl(e.target.value)}
-                  placeholder="മലയാള ചരിത്ര വിവരണം..."
                   className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-relaxed resize-none"
                 />
               </div>
@@ -1313,30 +1262,16 @@ export default function AdminDashboardPage() {
                 {editorMode === "create_news" ? "Publish News Announcement" : "Edit News Announcement"}
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">News Title (English)</label>
-                  <input
-                    type="text"
-                    required
-                    value={newsTitle}
-                    onChange={(e) => setNewsTitle(e.target.value)}
-                    placeholder="e.g. Feast of Kattumangattu Bavas Commemorated"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">News Title (Malayalam)</label>
-                  <input
-                    type="text"
-                    required
-                    value={newsTitleMl}
-                    onChange={(e) => setNewsTitleMl(e.target.value)}
-                    placeholder="ഉദാ: കാട്ടുമങ്ങാട്ട് ബാവാമാരുടെ പെരുന്നാൾ"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[9px] uppercase font-bold text-gold-primary">News Title</label>
+                <input
+                  type="text"
+                  required
+                  value={newsTitle}
+                  onChange={(e) => setNewsTitle(e.target.value)}
+                  placeholder="e.g. Feast of Kattumangattu Bavas Commemorated"
+                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
+                />
               </div>
 
               <ImageUpload
@@ -1347,25 +1282,13 @@ export default function AdminDashboardPage() {
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">English Content (Markdown supported)</label>
+                <label className="text-[9px] uppercase font-bold text-gold-primary">Content (Markdown supported)</label>
                 <textarea
                   required
                   rows={6}
                   value={newsContent}
                   onChange={(e) => setNewsContent(e.target.value)}
                   placeholder="Details of the announcement..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-relaxed font-mono"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Malayalam Content (മലയാളം ഉള്ളടക്കം)</label>
-                <textarea
-                  required
-                  rows={6}
-                  value={newsContentMl}
-                  onChange={(e) => setNewsContentMl(e.target.value)}
-                  placeholder="അറിയിപ്പിന്റെ വിശദവിവരങ്ങൾ മലയാളത്തിൽ എഴുതുക..."
                   className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-relaxed font-mono"
                 />
               </div>

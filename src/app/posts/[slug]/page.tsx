@@ -34,14 +34,20 @@ export async function generateMetadata({
   const title = `${post.title} | Nuhro Thozhiyoor`;
   const description = post.summary;
   const imageUrl = post.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800";
+  const isoDate = new Date(post.createdAt).toISOString();
 
   return {
     title,
     description,
+    alternates: {
+      canonical: `https://nuhro-thozhiyoor.vercel.app/posts/${post.slug}`,
+    },
     openGraph: {
       title,
       description,
       type: "article",
+      publishedTime: isoDate,
+      authors: ["Nuhro Thozhiyoor Digital Heritage"],
       images: [
         {
           url: imageUrl,
@@ -78,9 +84,72 @@ export default async function PostDetailsPage({
   const activeTitle = isMl ? post.titleMalayalam : post.title;
   const activeSummary = isMl ? post.summaryMalayalam : post.summary;
   const activeContent = isMl ? post.contentMalayalam : post.content;
+  const isoDate = new Date(post.createdAt).toISOString();
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": activeTitle,
+    "description": activeSummary,
+    "image": [
+      post.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800"
+    ],
+    "datePublished": isoDate,
+    "dateModified": isoDate,
+    "author": [{
+      "@type": "Organization",
+      "name": "Nuhro Thozhiyoor Digital Heritage",
+      "url": "https://nuhro-thozhiyoor.vercel.app"
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Nuhro Thozhiyoor Heritage Archive",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nuhro-thozhiyoor.vercel.app/logo.jpg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://nuhro-thozhiyoor.vercel.app/posts/${post.slug}`
+    }
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://nuhro-thozhiyoor.vercel.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Archive",
+        "item": "https://nuhro-thozhiyoor.vercel.app/archive"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://nuhro-thozhiyoor.vercel.app/posts/${post.slug}`
+      }
+    ]
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 text-parchment font-jakarta">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Back button */}
       <Link
         href="/archive"

@@ -277,32 +277,47 @@ export default async function HomePage() {
             <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0b0b12] to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0b0b12] to-transparent z-10 pointer-events-none" />
 
-            <div className="animate-marquee-scroll flex gap-8 py-4">
+            <div className="animate-marquee-scroll flex gap-8 py-6">
               {/* Double the array for infinite scrolling effect */}
               {[...allMetropolitans, ...allMetropolitans].map((metro, idx) => (
                 <Link
                   key={`${metro.id}-${idx}`}
                   href={`/metropolitans/${metro.slug}`}
-                  className="w-80 flex-shrink-0 bg-surface/90 border border-gold-primary/15 hover:border-gold-primary/45 rounded-xl p-5 flex gap-4 items-center transition-all duration-300 hover:scale-[1.03] shadow-lg hover:shadow-gold-glow/20 backdrop-blur-md group"
+                  className="w-72 sm:w-80 flex-shrink-0 bg-gradient-to-b from-surface/95 via-surface/90 to-cardElevated/90 border border-gold-primary/20 hover:border-gold-primary/60 rounded-2xl p-5 flex flex-col gap-4 transition-all duration-500 hover:scale-[1.03] shadow-2xl hover:shadow-gold-glow/30 backdrop-blur-md group relative overflow-hidden"
                 >
-                  <div className="w-20 h-24 rounded-lg overflow-hidden border border-gold-primary/20 bg-background flex-shrink-0 relative shadow-inner">
+                  {/* Subtle golden corner ornaments */}
+                  <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-gold-primary/30 rounded-tl pointer-events-none" />
+                  <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-gold-primary/30 rounded-tr pointer-events-none" />
+                  <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-gold-primary/30 rounded-bl pointer-events-none" />
+                  <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-gold-primary/30 rounded-br pointer-events-none" />
+
+                  {/* Grand Portrait Photo Frame */}
+                  <div className="w-full h-64 sm:h-72 rounded-xl overflow-hidden border border-gold-primary/25 bg-background relative shadow-inner">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={metro.imageUrl || "/logo.jpg"}
                       alt={metro.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
                   </div>
-                  <div className="flex flex-col gap-1.5 overflow-hidden min-w-0">
-                    <h4 className="font-cinzel font-extrabold text-sm text-gold-light group-hover:text-gold-primary transition-colors truncate leading-snug">
+
+                  {/* Text details */}
+                  <div className="flex flex-col gap-1 mt-1">
+                    <h4 className="font-cinzel font-bold text-base text-gold-light group-hover:text-gold-primary transition-colors truncate leading-snug">
                       {isMl ? metro.nameMalayalam : metro.name}
                     </h4>
-                    <span className="text-[10px] text-mutedText truncate italic">
+                    <span className="text-xs text-mutedText truncate italic">
                       {isMl ? metro.titleMalayalam : metro.title}
                     </span>
-                    <span className="text-xs text-gold-primary font-mono font-bold mt-1 bg-gold-primary/5 px-2 py-0.5 rounded border border-gold-primary/10 w-fit">
-                      {metro.reignStart} – {metro.reignEnd}
-                    </span>
+                    <div className="flex items-center justify-between border-t border-gold-primary/15 pt-3 mt-2">
+                      <span className="text-[10px] uppercase tracking-widest text-gold-primary/70 font-bold">
+                        {isMl ? "ഭരണകാലം" : "Episcopal Reign"}
+                      </span>
+                      <span className="text-xs text-gold-primary font-mono font-bold bg-gold-primary/10 px-2.5 py-1 rounded border border-gold-primary/20 shadow-sm">
+                        {metro.reignStart} – {metro.reignEnd}
+                      </span>
+                    </div>
                   </div>
                 </Link>
               ))}

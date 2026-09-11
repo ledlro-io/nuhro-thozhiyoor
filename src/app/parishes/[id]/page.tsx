@@ -38,6 +38,9 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: {
+      canonical: `https://nuhro-thozhiyoor.vercel.app/parishes/${parish.id}`,
+    },
     openGraph: {
       title,
       description,
@@ -116,8 +119,64 @@ export default async function ParishDetailsPage({
 
   const embedUrl = getEmbedUrl(parish.mapsUrl);
 
+  const churchJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Church",
+    "name": parish.name,
+    "alternateName": parish.nameMalayalam,
+    "description": parish.history?.substring(0, 180) || `Historic parish of the Malabar Independent Syrian Church established in ${parish.established}.`,
+    "image": parish.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": parish.address,
+      "addressCountry": "IN"
+    },
+    ...(parish.latitude && parish.longitude ? {
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": parish.latitude,
+        "longitude": parish.longitude
+      }
+    } : {}),
+    "telephone": parish.contact,
+    "url": `https://nuhro-thozhiyoor.vercel.app/parishes/${parish.id}`
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://nuhro-thozhiyoor.vercel.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Parishes",
+        "item": "https://nuhro-thozhiyoor.vercel.app/parishes"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": parish.name,
+        "item": `https://nuhro-thozhiyoor.vercel.app/parishes/${parish.id}`
+      }
+    ]
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 text-parchment font-jakarta animate-fade-in">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(churchJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Back button */}
       <Link
         href="/parishes"

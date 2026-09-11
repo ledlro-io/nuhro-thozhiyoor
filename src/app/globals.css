@@ -134,7 +134,7 @@
 .animate-marquee-scroll {
   display: flex;
   width: max-content;
-  animation: marquee 35s linear infinite;
+  animation: marquee 50s linear infinite;
 }
 
 .animate-marquee-scroll:hover {

@@ -39,6 +39,9 @@ export async function generateMetadata({
   return {
     title: `${name} | Nuhro Thozhiyoor`,
     description,
+    alternates: {
+      canonical: `https://nuhro-thozhiyoor.vercel.app/metropolitans/${metropolitan.slug}`,
+    },
     openGraph: {
       title: name,
       description,
@@ -168,8 +171,59 @@ export default async function MetropolitanDetailsPage({
     metropolitan.coverImageUrl ||
     "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop";
 
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": metropolitan.name,
+    "alternateName": metropolitan.nameMalayalam,
+    "jobTitle": metropolitan.title,
+    "description": metropolitan.bioSummary,
+    "image": metropolitan.imageUrl || "https://images.unsplash.com/photo-1548625361-155deee223d5?q=80&w=800",
+    ...(metropolitan.dob ? { "birthDate": metropolitan.dob } : {}),
+    ...(metropolitan.dod ? { "deathDate": metropolitan.dod } : {}),
+    "affiliation": {
+      "@type": "Church",
+      "name": "Malabar Independent Syrian Church (Thozhiyoor Sabha)",
+      "url": "https://nuhro-thozhiyoor.vercel.app"
+    },
+    "url": `https://nuhro-thozhiyoor.vercel.app/metropolitans/${metropolitan.slug}`
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://nuhro-thozhiyoor.vercel.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Succession of Metropolitans",
+        "item": "https://nuhro-thozhiyoor.vercel.app/metropolitans"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": metropolitan.name,
+        "item": `https://nuhro-thozhiyoor.vercel.app/metropolitans/${metropolitan.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 text-parchment font-jakarta animate-fade-in">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Back link */}
       <Link
         href="/metropolitans"
