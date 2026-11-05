@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     "Saint George Cathedral Thozhiyoor"
   ],
   authors: [{ name: "Nuhro Thozhiyoor Digital Heritage Initiative" }],
-  creator: "Malabar Independent Syrian Church",
+  creator: "Nuhro Thozhiyoor",
   publisher: "Nuhro Thozhiyoor",
   alternates: {
     canonical: "https://nuhro-thozhiyoor.vercel.app",

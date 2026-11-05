@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, FileText, Users, Image as ImageIcon, MapPin, MessageSquare, Plus, Trash2, Edit, AlertCircle, CheckCircle, Star } from "lucide-react";
+import { LogOut, FileText, Users, Image as ImageIcon, MapPin, MessageSquare, Plus, Trash2, Edit, AlertCircle, CheckCircle, Star, Printer, ExternalLink, Search, Compass, Eye, RefreshCw, Map } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
 
@@ -105,10 +106,15 @@ interface NewsItem {
 }
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"posts" | "metropolitans" | "gallery" | "parishes" | "feedback" | "news" | "users">("posts");
+  const [activeTab, setActiveTab] = useState<"posts" | "metropolitans" | "gallery" | "parishes" | "feedback" | "news" | "users" | "docs">("posts");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
+
+  // Search filters
+  const [parishSearchQuery, setParishSearchQuery] = useState("");
+  const [postSearchQuery, setPostSearchQuery] = useState("");
+  const [metroSearchQuery, setMetroSearchQuery] = useState("");
 
   // Data lists
   const [posts, setPosts] = useState<Post[]>([]);
@@ -514,6 +520,51 @@ export default function AdminDashboardPage() {
     setParishImageUrl(parish.imageUrl || "");
     setCurrentEditId(parish.id);
     setEditorMode("edit_parish");
+  };
+
+  // Helper to extract coordinates automatically from Google Maps URLs or input
+  const detectCoordinatesFromUrl = (url: string) => {
+    if (!url) {
+      showFeedback("error", "Please paste a Google Maps URL or coordinates first");
+      return;
+    }
+    // Pattern 1: @10.463385,76.015243
+    const atMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (atMatch) {
+      setParishLat(atMatch[1]);
+      setParishLng(atMatch[2]);
+      showFeedback("success", `Auto-detected coordinates: ${atMatch[1]}, ${atMatch[2]}`);
+      return;
+    }
+    // Pattern 2: ?q=10.463385,76.015243 or ll=10.463385,76.015243
+    const qMatch = url.match(/[?&](?:q|ll)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (qMatch) {
+      setParishLat(qMatch[1]);
+      setParishLng(qMatch[2]);
+      showFeedback("success", `Auto-detected coordinates: ${qMatch[1]}, ${qMatch[2]}`);
+      return;
+    }
+    // Pattern 3: Simple comma separated: 10.463385, 76.015243
+    const commaMatch = url.match(/^\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)\s*$/);
+    if (commaMatch) {
+      setParishLat(commaMatch[1]);
+      setParishLng(commaMatch[2]);
+      showFeedback("success", `Auto-detected coordinates: ${commaMatch[1]}, ${commaMatch[2]}`);
+      return;
+    }
+    // Pattern 4: src in iframe
+    const iframeMatch = url.match(/src="([^"]+)"/);
+    if (iframeMatch) {
+      const src = iframeMatch[1];
+      const srcCoord = src.match(/!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)/);
+      if (srcCoord) {
+        setParishLng(srcCoord[1]);
+        setParishLat(srcCoord[2]);
+        showFeedback("success", `Auto-detected coordinates from iframe: ${srcCoord[2]}, ${srcCoord[1]}`);
+        return;
+      }
+    }
+    showFeedback("error", "Could not automatically parse coordinates from this URL. Please enter latitude & longitude manually.");
   };
 
   const saveParish = async (e: React.FormEvent) => {
@@ -1168,9 +1219,9 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Contact Details</label>
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Contact Telephone</label>
                   <input
                     type="text"
                     required
@@ -1182,48 +1233,89 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Latitude</label>
+                  <label className="text-[9px] uppercase font-bold text-gold-primary">Address</label>
                   <input
                     type="text"
-                    value={parishLat}
-                    onChange={(e) => setParishLat(e.target.value)}
-                    placeholder="e.g. 10.463385"
-                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[9px] uppercase font-bold text-gold-primary">Longitude</label>
-                  <input
-                    type="text"
-                    value={parishLng}
-                    onChange={(e) => setParishLng(e.target.value)}
-                    placeholder="e.g. 76.015243"
+                    required
+                    value={parishAddress}
+                    onChange={(e) => setParishAddress(e.target.value)}
+                    placeholder="Parish address, City, District, PIN"
                     className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Google Maps Embed link / directions URL</label>
-                <input
-                  type="text"
-                  value={parishMapsUrl}
-                  onChange={(e) => setParishMapsUrl(e.target.value)}
-                  placeholder="https://www.google.com/maps/embed?..."
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment"
-                />
-              </div>
+              {/* Advanced Geolocation & Map Integration Suite */}
+              <div className="flex flex-col gap-3 p-4 rounded-xl bg-background/50 border border-gold-primary/20 shadow-inner">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gold-primary/10 pb-2">
+                  <label className="text-[10px] uppercase font-bold text-gold-primary flex items-center gap-1.5">
+                    <Compass size={14} className="text-gold-primary" /> Geolocation &amp; Google Maps Integration
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => detectCoordinatesFromUrl(parishMapsUrl || `${parishLat},${parishLng}`)}
+                    className="px-2.5 py-1 rounded bg-gold-primary/15 hover:bg-gold-primary/25 border border-gold-primary/30 text-gold-primary text-[9px] font-bold uppercase transition-all flex items-center gap-1 w-fit shadow-sm"
+                  >
+                    <RefreshCw size={10} /> Auto-Detect Coordinates
+                  </button>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] uppercase font-bold text-gold-primary">Address</label>
-                <textarea
-                  required
-                  rows={2}
-                  value={parishAddress}
-                  onChange={(e) => setParishAddress(e.target.value)}
-                  className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment leading-normal resize-none"
-                />
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] text-mutedText">Google Maps URL or Embed Code:</span>
+                  <input
+                    type="text"
+                    value={parishMapsUrl}
+                    onChange={(e) => setParishMapsUrl(e.target.value)}
+                    placeholder="Paste link: https://maps.google.com/place/... or coordinates '10.4633, 76.0152'"
+                    className="w-full px-4 py-2 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment font-mono"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] uppercase font-bold text-gold-primary/80">Latitude (North)</label>
+                    <input
+                      type="text"
+                      value={parishLat}
+                      onChange={(e) => setParishLat(e.target.value)}
+                      placeholder="e.g. 10.463385"
+                      className="w-full px-3 py-1.5 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment font-mono"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] uppercase font-bold text-gold-primary/80">Longitude (East)</label>
+                    <input
+                      type="text"
+                      value={parishLng}
+                      onChange={(e) => setParishLng(e.target.value)}
+                      placeholder="e.g. 76.015243"
+                      className="w-full px-3 py-1.5 rounded bg-background border border-gold-primary/20 focus:border-gold-primary/50 outline-none text-xs text-parchment font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Live Geocoding Validation Banner */}
+                {(parishLat && parishLng) || parishMapsUrl ? (
+                  <div className="pt-2 border-t border-gold-primary/10 flex items-center justify-between text-[10px] flex-wrap gap-2">
+                    <span className="text-green-400 flex items-center gap-1.5 font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      GPS Verified: {parishLat || "?"}, {parishLng || "?"}
+                    </span>
+                    <a
+                      href={parishLat && parishLng ? `https://www.google.com/maps/search/?api=1&query=${parishLat},${parishLng}` : parishMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gold-primary hover:text-gold-light hover:underline flex items-center gap-1 font-bold"
+                    >
+                      <ExternalLink size={10} /> Preview in Google Maps
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-[10px] text-mutedText italic">
+                    Tip: Paste any Google Maps share link and click &ldquo;Auto-Detect Coordinates&rdquo; to fill in GPS latitude and longitude.
+                  </p>
+                )}
               </div>
 
               <ImageUpload
@@ -1610,53 +1702,149 @@ export default function AdminDashboardPage() {
             {/* 4. PARISHES CMS TAB */}
             {activeTab === "parishes" && user?.role === "admin" && (
               <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between border-b border-gold-primary/5 pb-3">
-                  <h3 className="font-cinzel text-base font-bold text-gold-primary">Parishes &amp; Diocesan Churches</h3>
-                  <button
-                    onClick={startCreateParish}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-gold-primary text-background font-bold text-[10px] uppercase hover:brightness-110 shadow-gold-glow transition-all"
-                  >
-                    <Plus size={12} /> Add Parish
-                  </button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-primary/5 pb-4">
+                  <div>
+                    <h3 className="font-cinzel text-base font-bold text-gold-primary">Parishes &amp; Diocesan Churches</h3>
+                    <p className="text-[10px] text-mutedText mt-0.5">
+                      {parishes.length} churches registered &bull; {parishes.filter(p => p.latitude && p.longitude).length} mapped with GPS coordinates
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/parishes"
+                      target="_blank"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-background border border-gold-primary/20 hover:bg-gold-primary/10 text-gold-primary font-bold text-[10px] uppercase transition-all"
+                    >
+                      <Map size={12} /> View Live Map
+                    </Link>
+                    <button
+                      onClick={startCreateParish}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-gold-primary text-background font-bold text-[10px] uppercase hover:brightness-110 shadow-gold-glow transition-all"
+                    >
+                      <Plus size={12} /> Add Parish
+                    </button>
+                  </div>
                 </div>
 
-                {parishes.length > 0 ? (
-                  <div className="flex flex-col gap-4">
-                    {parishes.map((parish) => (
-                      <div
-                        key={parish.id}
-                        className="p-4 rounded-lg bg-surface border border-gold-primary/5 hover:border-gold-primary/15 transition-all flex items-center justify-between gap-4"
-                      >
-                        <div className="flex flex-col gap-1">
-                          <h4 className="font-cinzel text-sm font-bold text-parchment leading-snug">{parish.name}</h4>
-                          <p className="text-[10px] text-mutedText italic">{parish.nameMalayalam}</p>
-                          <div className="flex items-center gap-3 text-[10px] text-mutedText mt-1">
-                            <span className="font-bold text-gold-primary/80 uppercase">Est: {parish.established}</span>
-                            <span>&bull;</span>
-                            <span>Vicar: {parish.vicar}</span>
+                {/* Parish Search Box */}
+                <div className="relative">
+                  <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gold-primary/50" />
+                  <input
+                    type="text"
+                    value={parishSearchQuery}
+                    onChange={(e) => setParishSearchQuery(e.target.value)}
+                    placeholder="Search parishes by name, vicar, establishment year, or location..."
+                    className="w-full pl-9 pr-14 py-2.5 rounded-lg bg-surface border border-gold-primary/15 focus:border-gold-primary/45 outline-none text-xs text-parchment"
+                  />
+                  {parishSearchQuery && (
+                    <button
+                      onClick={() => setParishSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gold-primary font-bold uppercase hover:underline"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                {(() => {
+                  const filteredParishes = parishes.filter((parish) => {
+                    if (!parishSearchQuery.trim()) return true;
+                    const q = parishSearchQuery.toLowerCase();
+                    return (
+                      parish.name.toLowerCase().includes(q) ||
+                      parish.nameMalayalam?.toLowerCase().includes(q) ||
+                      parish.vicar.toLowerCase().includes(q) ||
+                      parish.established.includes(q) ||
+                      parish.address.toLowerCase().includes(q)
+                    );
+                  });
+
+                  return filteredParishes.length > 0 ? (
+                    <div className="flex flex-col gap-3">
+                      {filteredParishes.map((parish) => (
+                        <div
+                          key={parish.id}
+                          className="p-4 rounded-xl bg-surface border border-gold-primary/10 hover:border-gold-primary/25 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
+                        >
+                          <div className="flex gap-4 items-center">
+                            {parish.imageUrl && (
+                              <div className="w-14 h-14 rounded-lg overflow-hidden border border-gold-primary/15 bg-background flex-shrink-0 shadow-sm">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={parish.imageUrl} alt={parish.name} className="w-full h-full object-cover" />
+                              </div>
+                            )}
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="font-cinzel text-sm font-bold text-parchment leading-snug">{parish.name}</h4>
+                                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-gold-primary/10 border border-gold-primary/20 text-gold-primary uppercase">
+                                  Est. {parish.established}
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-mutedText italic">{parish.nameMalayalam}</p>
+                              <div className="flex items-center gap-3 text-[10px] text-mutedText mt-0.5 flex-wrap">
+                                <span>Vicar: <strong className="text-parchment/90">{parish.vicar}</strong></span>
+                                <span>&bull;</span>
+                                <span>Tel: {parish.contact}</span>
+                                <span>&bull;</span>
+                                {parish.latitude && parish.longitude ? (
+                                  <span className="text-green-400 font-mono text-[9px] flex items-center gap-1 font-bold">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                                    GPS: {parish.latitude.toFixed(4)}, {parish.longitude.toFixed(4)}
+                                  </span>
+                                ) : (
+                                  <span className="text-amber-400 font-mono text-[9px] flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                    No GPS Coordinates
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-shrink-0 self-end md:self-center">
+                            {parish.latitude && parish.longitude && (
+                              <a
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${parish.latitude},${parish.longitude}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Get Driving Directions"
+                                className="p-2 bg-background hover:bg-gold-primary/10 border border-gold-primary/20 rounded text-gold-primary transition-all text-xs flex items-center gap-1"
+                              >
+                                <Compass size={13} />
+                              </a>
+                            )}
+                            <Link
+                              href={`/parishes/${parish.id}`}
+                              target="_blank"
+                              title="View Public SEO Page"
+                              className="p-2 bg-background hover:bg-gold-primary/10 border border-gold-primary/20 rounded text-gold-primary transition-all text-xs flex items-center gap-1"
+                            >
+                              <Eye size={13} />
+                            </Link>
+                            <button
+                              onClick={() => startEditParish(parish)}
+                              title="Edit Parish Details"
+                              className="p-2 bg-background hover:bg-cardElevated border border-gold-primary/15 hover:border-gold-primary/45 rounded text-gold-primary transition-all"
+                            >
+                              <Edit size={13} />
+                            </button>
+                            <button
+                              onClick={() => deleteParish(parish.id)}
+                              title="Delete Parish"
+                              className="p-2 bg-background hover:bg-red-950/25 border border-red-500/10 hover:border-red-500/40 rounded text-red-400 transition-all"
+                            >
+                              <Trash2 size={13} />
+                            </button>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => startEditParish(parish)}
-                            className="p-2 bg-background hover:bg-cardElevated border border-gold-primary/15 hover:border-gold-primary/45 rounded text-gold-primary transition-all"
-                          >
-                            <Edit size={12} />
-                          </button>
-                          <button
-                            onClick={() => deleteParish(parish.id)}
-                            className="p-2 bg-background hover:bg-red-950/25 border border-red-500/10 hover:border-red-500/40 rounded text-red-400 transition-all"
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-mutedText text-xs italic text-center py-10">No parishes registered in church database.</p>
-                )}
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-mutedText text-xs italic text-center py-10">
+                      {parishSearchQuery ? "No parishes match your search query." : "No parishes registered in church database."}
+                    </p>
+                  );
+                })()}
               </div>
             )}
 
@@ -1880,6 +2068,47 @@ export default function AdminDashboardPage() {
                   ) : (
                     <p className="text-mutedText text-xs italic text-center">No other archivist accounts loaded.</p>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* 8. DOCUMENT STUDIO TAB */}
+            {activeTab === "docs" && (
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-primary/10 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gold-primary px-2 py-0.5 rounded bg-gold-primary/10 border border-gold-primary/20">
+                        Official Archive Studio
+                      </span>
+                      <span className="text-[10px] text-mutedText">Vector Logo &amp; Print Engine</span>
+                    </div>
+                    <h3 className="font-cinzel text-lg font-bold text-gold-primary mt-1">
+                      Nuhro Thozhiyoor Document Studio
+                    </h3>
+                    <p className="text-xs text-mutedText mt-0.5">
+                      Generate official letters, notices, contribution receipts, press releases, certificates (Midnight &amp; Light styles), and inspect brand assets.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    <a
+                      href="/admin/document-studio.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gold-primary text-background font-bold text-xs uppercase hover:brightness-110 shadow-gold-glow transition-all"
+                    >
+                      <ExternalLink size={14} /> Open Fullscreen Studio
+                    </a>
+                  </div>
+                </div>
+
+                <div className="w-full rounded-2xl overflow-hidden border border-gold-primary/20 bg-background shadow-2xl h-[calc(100vh-220px)] min-h-[920px]">
+                  <iframe
+                    src="/admin/document-studio.html"
+                    className="w-full h-full border-0"
+                    title="Nuhro Thozhiyoor Document Studio"
+                  />
                 </div>
               </div>
             )}
