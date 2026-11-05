@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, FileText, Users, Image as ImageIcon, MapPin, MessageSquare, Plus, Trash2, Edit, AlertCircle, CheckCircle, Star, Printer, ExternalLink, Search, Compass, Eye, RefreshCw, Map } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
-import DocumentStudio from "@/components/studio/DocumentStudio"; 
+import DocumentStudio from "@/components/studio/DocumentStudio";
 
 interface Post {
   id: string;
@@ -2074,45 +2074,25 @@ export default function AdminDashboardPage() {
             )}
 
             {/* 8. DOCUMENT STUDIO TAB */}
-            {activeTab === "docs" && (
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gold-primary/10 pb-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gold-primary px-2 py-0.5 rounded bg-gold-primary/10 border border-gold-primary/20">
-                        Official Archive Studio
-                      </span>
-                      <span className="text-[10px] text-mutedText">Vector Logo &amp; Print Engine</span>
-                    </div>
-                    <h3 className="font-cinzel text-lg font-bold text-gold-primary mt-1">
-                      Nuhro Thozhiyoor Document Studio
-                    </h3>
-                    <p className="text-xs text-mutedText mt-0.5">
-                      Generate official letters, notices, contribution receipts, press releases, certificates (Midnight &amp; Light styles), and inspect brand assets.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2.5">
-                    <a
-                      href="/admin/document-studio.html"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gold-primary text-background font-bold text-xs uppercase hover:brightness-110 shadow-gold-glow transition-all"
-                    >
-                      <ExternalLink size={14} /> Open Fullscreen Studio
-                    </a>
-                  </div>
-                </div>
-
-                <div className="w-full rounded-2xl overflow-hidden border border-gold-primary/20 bg-background shadow-2xl h-[calc(100vh-220px)] min-h-[920px]">
-                  <iframe
-                    src="/admin/document-studio.html"
-                    className="w-full h-full border-0"
-                    title="Nuhro Thozhiyoor Document Studio"
-                  />
-                </div>
-              </div>
-            )}
+           {activeTab === "docs" && (
+  <div className="flex flex-col gap-6">
+    <div className="border-b border-gold-primary/10 pb-4">
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-gold-primary px-2 py-0.5 rounded bg-gold-primary/10 border border-gold-primary/20">
+          Official Archive Studio
+        </span>
+      </div>
+      <h3 className="font-cinzel text-lg font-bold text-gold-primary mt-1">
+        Nuhro Thozhiyoor Document Studio
+      </h3>
+      <p className="text-xs text-mutedText mt-0.5">
+        Generate official letters, notices, receipts, certificates, reports and ID cards, singly or in bulk from Excel / CSV.
+      </p>
+    </div>
+ 
+    <DocumentStudio />
+  </div>
+)}
           </div>
         </div>
       )}
