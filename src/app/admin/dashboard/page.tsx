@@ -2074,7 +2074,7 @@ export default function AdminDashboardPage() {
             )}
 
             {/* 8. DOCUMENT STUDIO TAB */}
-           {activeTab === "docs" && (
+           {activeTab === "docs" && user?.role === "admin" &&  (
   <div className="flex flex-col gap-6">
     <div className="border-b border-gold-primary/10 pb-4">
       <div className="flex items-center gap-2">
