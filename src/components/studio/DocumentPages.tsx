@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { type CSSProperties, type ReactNode } from "react";
 import { VARIANTS, pageSize, type Signatory, type Template, type Values } from "@/lib/studio/data";
+import { XIcon, YoutubeIcon } from "lucide-react";
 
 const LOGO = "/logo.jpg"; // public/logo.jpg
 
@@ -528,7 +529,11 @@ export function buildPages(tpl: Template, v: Values, sigs: Signatory[]): ReactNo
             <MailIcon />
             nuhrothozhiyoor@gmail.com
           </span>
-          <em>Independent · Non-official</em>
+          <span>
+             <XIcon />
+             @nuhrothozhiyoor
+          </span>
+
         </div>
         <p>
           An independent, non-official research and heritage initiative. Not the official website or administrative
