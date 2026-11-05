@@ -21,7 +21,7 @@ import {
 import { buildPages } from "./DocumentPages";
 import SignaturePad from "./SignaturePad";
 import { studioFontVars } from "./fonts";
-import "./studio.css";
+
 
 /* ---------- shared look (uses the admin theme colours) ---------- */
 const card = "rounded-xl border border-gold-primary/20 bg-surface p-4";
