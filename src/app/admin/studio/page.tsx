@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ExternalLink, Printer, Shield, Sparkles } from "lucide-react";
+import { ArrowLeft, Shield } from "lucide-react";
+import DocumentStudio from "@/components/studio/DocumentStudio";
 
 export default function DocumentStudioPage() {
   const router = useRouter();
@@ -58,32 +59,15 @@ export default function DocumentStudioPage() {
                 <Shield size={12} className="text-gold-primary" /> Admin Authenticated ({user?.name || "Admin"})
               </span>
             </div>
-            <h1 className="font-cinzel text-2xl font-bold text-gold-primary mt-0.5 flex items-center gap-2">
+            <h1 className="font-cinzel text-2xl font-bold text-gold-primary mt-0.5">
               Document Studio &amp; Certificate Generator
             </h1>
           </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <a
-            href="/admin/document-studio.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gold-primary text-background font-bold text-xs uppercase hover:brightness-110 shadow-gold-glow transition-all"
-          >
-            <ExternalLink size={14} /> Open Fullscreen
-          </a>
-        </div>
       </div>
 
-      {/* Embedded Studio */}
-      <div className="w-full rounded-2xl overflow-hidden border border-gold-primary/20 bg-background shadow-2xl h-[calc(100vh-160px)] min-h-[850px]">
-        <iframe
-          src="/admin/document-studio.html"
-          className="w-full h-full border-0"
-          title="Nuhro Thozhiyoor Document Studio"
-        />
-      </div>
+      {/* Studio */}
+      <DocumentStudio />
     </div>
   );
 }

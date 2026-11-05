@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, FileText, Users, Image as ImageIcon, MapPin, MessageSquare, Plus, Trash2, Edit, AlertCircle, CheckCircle, Star, Printer, ExternalLink, Search, Compass, Eye, RefreshCw, Map } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
+import DocumentStudio from "@/components/studio/DocumentStudio"; 
 
 interface Post {
   id: string;
