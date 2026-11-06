@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/archive</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/gallery</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/timeline</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/parishes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/feedback</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Metropolitans (individual biography pages) -->
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/cyril-mar-baselios-i</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/st-abraham-mar-koorilose-i</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/st-geevarghese-mar-koorilose-ii</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/joseph-mar-ivanios--suffragan-metropolitan</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/zacharias-mar-philoxenos-i</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/geevarghese-mar-philoxenos-ii</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/ghevarghese-mar-koorilose-iii</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/joseph-mar-koorilose-iv</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/joseph-mar-athanasius-i</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/geevarghese-mar-koorilose-v</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/metropolitans/geevarghese-mar-koorilose-vii</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Posts (research articles) -->
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/posts/the-life-and-episcopate-of-geevarghese-mar-koorilose-vii-cheeran-of-thozhiyoor</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/posts/a-man-of-much-prayer-and-fears-god-geevarghese-mar-philoxenos-ii</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nuhro-thozhiyoor.vercel.app/posts/the-boys-who-sang-perfectly</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!--
+    This list reflects only the metropolitans and posts linked from the
+    homepage at fetch time. If your archive has more entries than shown
+    there (e.g. missing succession orders, or older posts beyond the
+    latest 3), add those <url> entries too, or better: switch to an
+    app/sitemap.ts route that queries your database directly so every
+    new post/metropolitan is included automatically.
+    /admin and /admin/dashboard are intentionally excluded — do not index those.
+  -->
+
+</urlset>
